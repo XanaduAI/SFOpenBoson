@@ -56,18 +56,18 @@ where :math:`AB^T=BA^T` and :math:`AA^\dagger = BB^\dagger+\I`.
 Time propagation
 ----------------
 
-Once the matrix of quadratic coefficients :math:`A` and vector of linear coefficients :math:`\mathbf{d}` have been found for the Gaussian Hamiltonian, it can be shown that the Hamiltonian can always be written in the following form, up to a constant factor :cite:`serafini2017`:
+Once the matrix of quadratic coefficients :math:`A` and vector of linear coefficients :math:`\mathbf{d}` have been found for the Gaussian Hamiltonian, it can be shown that the Hamiltonian can always be written in the following form, up to a local phase factor :cite:`serafini2017`:
 
 .. math:: \hat{H} = \frac{1}{2}(\r-\mathbf{d}')A(\r-\mathbf{d}')
 
-where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}` (this quantity can always be calculated, since :math:`A` is symmetric positive definite). This corresponds to the acti
-on of a Weyl operator or displacement of the form :math:`\hat{D}(-\mathbf{d}'/\sqrt{2\hbar})` (see the Strawberry Fields documentation on the `displacement operator <https://strawberryfields.readthedocs.io/en/latest/conventions/gates.html#displacement>`_).
+where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}` (this quantity can always be calculated, since :math:`A` is symmetric positive definite). Let's consider the case of zero linear coefficients, and non-zero linear coefficients, separately.
 
-Thus, we can (for now) discount the effect of the linear coefficients, and solve the time-evolution propagation of the Hamiltonians considering only the quadratic coefficients.
+Zero linear coefficients
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the Heisenberg picture, with :math:`\hat{H}=\frac{1}{2}\r A\r`, the time-evolution of the quadrature operators must satisfy the following differential equation:
 
-.. math:: \frac{d}{dt}\r_j = \frac{1}{2}i[\hat{H},\r_j] ~~\Leftrightarrow ~~ \frac{d}{dt}\r = \Omega A \hbar\r ,
+.. math:: \frac{d}{dt}\r_j = \frac{i}{\hbar}[\hat{H},\r_j] ~~\Leftrightarrow ~~ \frac{d}{dt}\r = \Omega A \hbar\r ,
 
 where
 
@@ -79,6 +79,43 @@ Solving this differential equation, we find that the symplectic Gaussian transfo
 
 .. math:: S = \exp{\left(\Omega A \hbar t\right)}
 
-Taking into account the displacement operation due to non-zero linear coefficients, the overall symplectic transformation is given by
 
-.. math:: S = \hat{D}\left(\frac{A^{-1}\mathbf{d}}{\sqrt{2\hbar}}\right)^\dagger\exp{\left(\Omega A \hbar t\right)}\hat{D}\left(\frac{A^{-1}\mathbf{d}}{\sqrt{2\hbar}}\right)
+Non-zero linear coefficients
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If, on the other hand, have non-zero linear coefficients, we need to take this into account by performing the required displacement operation. Consider the following Gaussian Hamiltonian:
+
+.. math:: \hat{H}(\mathbf{d}') = \frac{1}{2}(\r-\mathbf{d}')A(\r-\mathbf{d}')
+
+
+where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}`, as before. This corresponds to the action of a `Weyl operator or displacement <https://strawberryfields.readthedocs.io/en/latest/conventions/gates.html#displacement>`_ of the form :math:`\hat{D}(\mathbf{s})` with :math:`\mathbf{s}=-\mathbf{d}'/\sqrt{2\hbar}`:
+
+.. math::  \hat{H}(\mathbf{d}') = \frac{1}{2}\hat{D}(\mathbf{s})\r A\r \hat{D}(\mathbf{s})^\dagger = \hat{D}(\mathbf{s})\hat{H}(0)\hat{D}(\mathbf{s})^\dagger.
+
+Calculating the time-evolution operator,
+
+.. math:: \hat{U}(t) = e^{-i\hat{H}(d) t} = e^{-i\hat{D}(\mathbf{s})\hat{H}(0)\hat{D}(\mathbf{s})^\dagger t} = \hat{D}(\mathbf{s})e^{-i\hat{H}(0) t}\hat{D}(\mathbf{s})^\dagger.
+
+In order to write this as a symplectic matrix transformation, we need to move all displacement operators to the left. To do this, we can post-multiply by :math:`\I=e^{i\hat{H}(0)t}e^{-i\hat{H}(0)t}`:
+
+.. math::
+	\hat{U}(t) = \hat{D}(\mathbf{s})\left[e^{-i\hat{H}(0) t}\hat{D}(\mathbf{s})^\dagger e^{i\hat{H}(0)t}\right]e^{-i\hat{H}(0)t}
+
+Finally, we can rewrite this as a symplectic transformation, by making the substitution :math:`e^{-i\hat{H}(0)t}\rightarrow e^{\Omega A \hbar t}` and by noting that the bracketed term is simply a displacement by :math:`-\mathbf{s}`, evolved under :math:`\hat{H}(0)` for time :math:`t`:
+
+.. math::
+	S = \hat{D}(\mathbf{s} -{e^{\Omega A \hbar t}}^T \mathbf{s}) e^{\Omega A \hbar t}
+
+
+.. admonition:: Definition
+	:class: defn
+
+	For a quadratic Hamiltonian of the form :math:`\hat{H} = \frac{1}{2}\r A\r + \r^T \mathbf{d}`, the symplectic transformation :math:`S\in\mathbb{R}^{2N\times 2N}` characterizing the time-evolution unitary operator :math:`\hat{U}(t) = e^{-i\hat{H}t}` is given by
+
+	.. math:: S = \hat{D}(\mathbf{s} -{e^{\Omega A \hbar t}}^T \mathbf{s}) e^{\Omega A \hbar t}
+
+	where :math:`\Omega` is the symplectic matrix, :math:`\hat{D}` the displacement operation, and :math:`\mathbf{s} = -A^{-1}\mathbf{d}/\sqrt{2\hbar}`.
+
+.. tip::
+
+   *Implemented in SF-OpenFermion as a quantum operation by* :class:`SFopenfermion.ops.GaussianPropagation`

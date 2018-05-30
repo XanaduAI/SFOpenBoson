@@ -230,6 +230,8 @@ class GaussianPropagation(Decomposition):
 
                 A = tmp
 
+        self.S = expm(sympmat(self.ns) @ A * t * self.hbar)
+
         self.disp = False
         if not np.all(d == 0.):
             self.disp = True
@@ -237,16 +239,18 @@ class GaussianPropagation(Decomposition):
                 self.d = d*self.hbar*t
             else:
                 if np.linalg.cond(A) < 1/sys.float_info.epsilon:
-                    self.d = (-inv(A) @ d)*self.hbar*t
+                    s = inv(A) @ d
+                    tmp = s - self.S.T @ s
+                    self.d = np.zeros([2*self.ns])
+                    self.d[self.ns:] = tmp[:self.ns]
+                    self.d[:self.ns] = tmp[self.ns:]
                 else:
                     self.disp = False
 
-        self.S = expm(sympmat(self.ns) @ A * t * self.hbar)
-
     def decompose(self, reg):
         cmds = []
+        cmds += [Command(GaussianTransform(self.S, hbar=self.hbar), reg, decomp=True)]
         if self.disp:
             cmds += [Command(Xgate(x), reg, decomp=True) for x in self.d[:self.ns] if x != 0.]
             cmds += [Command(Zgate(z), reg, decomp=True) for z in self.d[self.ns:] if z != 0.]
-        cmds += [Command(GaussianTransform(self.S, hbar=self.hbar), reg, decomp=True)]
         return cmds

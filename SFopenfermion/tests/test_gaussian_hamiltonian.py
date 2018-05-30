@@ -302,6 +302,47 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
 
+class TestQuadraticAndLinear(unittest.TestCase):
+    def setUp(self):
+        self.hbar = 2.
+        self.eng, _ = sf.Engine(1, hbar=self.hbar)
+        self.x0 = 1
+        self.p0 = 0.5
+        self.F = 2
+        self.t = 3
+        self.dt = 0.02
+
+    def displaced_oscillator_soln(self, t):
+        st = np.sin(t*self.hbar)
+        ct = np.cos(t*self.hbar)
+        x = self.p0*st + (self.x0-self.F)*ct + self.F
+        p = (self.F-self.x0)*st + self.p0*ct
+        return np.array([x, p])
+
+    def test_displaced_oscillator(self):
+        H = QuadOperator('q0 q0', 0.5)
+        H += QuadOperator('p0 p0', 0.5)
+        H -= QuadOperator('q0', self.F)
+
+        res = []
+        tlist = np.arange(0, self.t, self.dt)
+
+        for t in tlist:
+            self.eng.reset()
+            q = self.eng.register
+            with self.eng:
+                Xgate(self.x0) | q[0]
+                Zgate(self.p0) | q[0]
+                GaussianPropagation(H, self.t) | q
+
+            state = self.eng.run('gaussian')
+            res.append(state.means().tolist())
+
+        res = np.array(res)[-1]
+        expected = self.displaced_oscillator_soln(self.t)
+        self.assertTrue(np.allclose(res, expected))
+
+
 class TestToolchain(unittest.TestCase):
     def setUp(self):
         self.hbar = 2.
