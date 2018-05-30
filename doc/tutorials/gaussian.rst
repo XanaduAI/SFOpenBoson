@@ -60,13 +60,11 @@ To simulate the time-propagation of the forced oscillator in StrawberryFields, w
 
 * ``operator``: a bosonic Gaussian Hamiltonian, either in the form of a ``BosonOperator`` or ``QuadOperator``.
 
-* ``t=1`` (float): the time propagation value. If not provided, default value is 1.
+* ``t`` (float): the time propagation value. If not provided, default value is 1.
 
-* ``mode`` (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only the applied qumodes ``(q_i, q_j,...)``.
+* ``mode`` (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only the applied qumodes. For example, if ``QuadOperator('q0 p1') | (q[2], q[4])``, then ``q0`` acts on ``q[2]``, and ``p1`` acts on ``q[4]``.
 
-For example, if ``QuadOperator('q0 p1') | (q[2], q[4])``, then ``q0`` acts on ``q[2]``, and ``p1`` acts on ``q[4]``.
-
-If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register by directly matching qumode numbers of the defined Hamiltonian; i.e., ``q0`` is applied to ``q[0]``, ``p1`` is applied to ``q[1]``, etc.
+Alternatively, you can set ``mode='global'``, and the Hamiltonian is instead applied to the entire register by directly matching qumode numbers of the defined Hamiltonian; i.e., ``q0`` is applied to ``q[0]``, ``p1`` is applied to ``q[1]``, etc.
 
 Let's set up the one qumode quantum circuit, propagating the forced oscillator Hamiltonian ``H`` we defined in the previous section, starting from the initial location :math:`(1,0.5)` in the phase space, for time :math:`t=1.43`:
 
