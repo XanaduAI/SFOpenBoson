@@ -3,8 +3,8 @@ COVERAGE3 := $(shell which coverage3 2>/dev/null)
 
 PYTHON := python3
 COVERAGE := coverage3
-COPTS := run --append
-TESTRUNNER := -m unittest discover tests
+COPTS := run #--append
+TESTRUNNER := -m unittest discover SFopenfermion/tests
 
 .PHONY: help
 help:
@@ -42,11 +42,11 @@ clean:
 	rm -rf build
 
 docs:
-	make -C docs html
+	make -C doc html
 
 .PHONY : clean-docs
 clean-docs:
-	make -C docs clean
+	make -C doc clean
 
 test:
 	$(PYTHON) $(TESTRUNNER)

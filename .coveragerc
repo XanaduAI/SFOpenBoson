@@ -18,17 +18,6 @@ exclude_lines =
     def _print_list
 
     # Don't complain if tests don't hit defensive assertion code:
-    raise AssertionError
-    raise NotImplementedError
-    raise NotApplicableError
-    raise Exception
-    raise ValueError
-    raise ZeroDivisionError
-    raise TypeError
-    raise RuntimeError
-    raise IndexError
-    raise FileNotFoundError
-    raise NotADirectoryError
     return __version__ 
     if len(lst) != self._num_modes: 
     elif max(lst) >= self._trunc: 

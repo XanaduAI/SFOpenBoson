@@ -11,5 +11,65 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Hamiltonians
+============
 
-from .gates import *
+Here, we provided several auxillary Hamiltonians for CV systems.
+
+Gates
+-----
+
+This file contains the Hamiltonian representations of the CV
+operations found in StrawberryFields.
+
+All Hamiltonians in the file return a tuple containing the Hamiltonian
+operator (either as a BosonOperator or a QuadOperator) and the time
+propagation.
+
+.. autosummary::
+    displacement
+    xdisplacement
+    zdisplacement
+    rotation
+    squeezing
+    quadratic_phase
+    beamsplitter
+    two_mode_squeezing
+    controlled_addition
+    controlled_phase
+    cubic_phase
+    kerr
+
+Bose-Hubbard Hamiltonians
+-------------------------
+todo
+
+Code details
+------------
+"""
+from .gates import (displacement,
+                    xdisplacement,
+                    zdisplacement,
+                    rotation,
+                    squeezing,
+                    quadratic_phase,
+                    beamsplitter,
+                    two_mode_squeezing,
+                    controlled_addition,
+                    controlled_phase,
+                    cubic_phase,
+                    kerr)
+
+__all__ = ['displacement',
+           'xdisplacement',
+           'zdisplacement',
+           'rotation',
+           'squeezing',
+           'quadratic_phase',
+           'beamsplitter',
+           'two_mode_squeezing',
+           'controlled_addition',
+           'controlled_phase',
+           'cubic_phase',
+           'kerr']

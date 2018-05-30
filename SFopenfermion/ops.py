@@ -31,8 +31,8 @@ For example:
     H2 = QuadOperator('q0 p0') + QuadOperator('p0 q0') - QuadOperator('p2 p2')
 
     with eng:
-        GaussianHamiltonian(1, H1) | q[0]
-        GaussianHamiltonian(0.5, H2, 'global') | q
+        GaussianPropagation(H1) | q[0]
+        GaussianPropagation(H2, t=0.5, 'global') | q
 
     state = eng.run('gaussian')
 
@@ -63,18 +63,8 @@ Summary
 -------
 
 .. autosummary::
-    displacement
-    xdisplacement
-    zdisplacement
-    rotation
-    squeezing
-    quadratic_phase
-    beamsplitter
-    two_mode_squeezing
-    controlled_addition
-    controlled_phase
-    cubic_phase
-    kerr
+    quadratic_coefficients
+    GaussianPropagation
 
 Code details
 ------------
@@ -93,10 +83,6 @@ from strawberryfields.backends.shared_ops import sympmat, changebasis
 from openfermion.ops import QuadOperator, BosonOperator
 from openfermion.transforms import get_quad_operator
 from openfermion.utils import is_hermitian, prune_unused_indices
-
-
-def displacement_vector(operator):
-    pass
 
 
 def quadratic_coefficients(operator):
@@ -156,7 +142,7 @@ def quadratic_coefficients(operator):
     return A, d
 
 
-class GaussianHamiltonian(Decomposition):
+class GaussianPropagation(Decomposition):
     r"""Propagate the specified qumodes by a bosonic Gaussian Hamiltonians.
 
     A Gaussian Hamiltonian is any combination of quadratic operators
@@ -169,7 +155,7 @@ class GaussianHamiltonian(Decomposition):
     * :math:`A\in\mathbb{R}^{2N\times 2N}` is a symmetric matrix,
     * :math:`\mathbf{d}\in\mathbb{R}^{2N}` is a real vector, and
     * :math:`\mathbf{r} = (\x_1,\dots,\x_N,\p_1,\dots,\p_N)` is the vector
-    of means in :math:`xp`-ordering.
+      of means in :math:`xp`-ordering.
 
     This operation calculates the real symmetric matrix of quadratic coefficients
     of the quadrature operators, and calculates the corresponding Gaussian symplectic
@@ -180,9 +166,10 @@ class GaussianHamiltonian(Decomposition):
     where
 
     * :math:`\Omega=\begin{bmatrix}0&I_N\\-I_N&0\end{bmatrix}\in\mathbb{R}^{2N\times 2N}`
-        is the symplectic matrix,
+      is the symplectic matrix,
+
     * :math:`\hbar` is the convention chosen in the definition of the quadrature
-            operators, :math:`[\x,\p]=i\hbar`.
+      operators, :math:`[\x,\p]=i\hbar`.
 
     Depending on whether the resulting symplectic transformation is passive
     (photon-preserving) or active (non-photon preserving), the Clements or
@@ -190,8 +177,8 @@ class GaussianHamiltonian(Decomposition):
     the Hamiltonian into a set of CV gates.
 
     Args:
-        t (float): the time propagation value
         operator (BosonOperator, QuadOperator): a bosonic Gaussian Hamiltonian
+        t (float): the time propagation value. If not provided, default value is 1.
         mode (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only
             the applied qumodes (q[i], q[j],...). I.e., a_0 applies to q[i], a_1 applies to q[j].
             If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register;
@@ -201,7 +188,7 @@ class GaussianHamiltonian(Decomposition):
             context, the hbar value of the engine will override this keyword argument.
     """
     ns = None
-    def __init__(self, t, operator, mode='local', hbar=None):
+    def __init__(self, operator, t=1, mode='local', hbar=None):
         super().__init__([t, operator])
 
         try:
@@ -230,6 +217,18 @@ class GaussianHamiltonian(Decomposition):
             self.ns = A.shape[0]//2
         elif mode == 'global':
             self.ns = _Engine._current_context.num_subsystems
+            if A.shape[0] < 2*self.ns:
+                # expand the quadratic coefficient matrix to take
+                # into account the extra modes
+                A_n = A.shape[0]//2
+                tmp = np.zeros([2*self.ns, 2*self.ns])
+
+                tmp[:A_n, :A_n] = A[:A_n, :A_n]
+                tmp[:A_n, self.ns:self.ns+A_n] = A[:A_n, A_n:]
+                tmp[self.ns:self.ns+A_n, :A_n] = A[A_n:, :A_n]
+                tmp[self.ns:self.ns+A_n, self.ns:self.ns+A_n] = A[A_n:, A_n:]
+
+                A = tmp
 
         self.disp = False
         if not np.all(d == 0.):
