@@ -18,7 +18,7 @@ import numpy as np
 from scipy.linalg import expm
 
 from openfermion.ops import *
-from openfermion.utils import is_hermitian
+from openfermion.utils import is_hermitian, normal_ordered
 from openfermion.transforms import *
 
 from SFopenfermion.hamiltonians import *
@@ -30,18 +30,18 @@ class TestDisplacement(unittest.TestCase):
         self.hbar = 2
 
     def test_identity(self):
-        H, r = displacement(0)
+        H, r = displacement(0, hbar=self.hbar)
         self.assertEqual(H, BosonOperator.identity())
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
-        H, r = displacement(self.alpha)
+        H, r = displacement(self.alpha, hbar=self.hbar)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_quad_operator(H)))
 
     def test_gaussian(self):
-        H, r = displacement(self.alpha)
-        res = get_quad_operator(H).is_gaussian()
+        H, r = displacement(self.alpha, hbar=self.hbar)
+        res = get_quad_operator(H, hbar=self.hbar).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
@@ -49,13 +49,13 @@ class TestDisplacement(unittest.TestCase):
         self.assertEqual(r, np.abs(self.alpha))
 
     def test_coefficients(self):
-        H, r = displacement(self.alpha)
+        H, r = displacement(self.alpha, hbar=self.hbar)
         phi = np.angle(self.alpha)
 
         for term, coeff in H.terms.items():
             self.assertEqual(len(term), 1)
             j = 1-term[0][1]
-            expected = (-1)**j * np.exp(1j*phi*(-1)**j)
+            expected = (-1)**j * np.exp(1j*phi*(-1)**j)*self.hbar
             self.assertEqual(coeff, 1j*expected)
 
 
@@ -69,22 +69,22 @@ class TestXDisplacement(unittest.TestCase):
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
-        H, r = xdisplacement(self.x, hbar=self.hbar)
+        H, r = xdisplacement(self.x)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_boson_operator(H, hbar=self.hbar)))
 
     def test_gaussian(self):
-        H, r = xdisplacement(self.x, hbar=self.hbar)
+        H, r = xdisplacement(self.x)
         res = H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
-        H, r = xdisplacement(self.x, hbar=self.hbar)
+        H, r = xdisplacement(self.x)
         self.assertEqual(r, self.x)
 
     def test_coefficients(self):
-        H, r = xdisplacement(self.x, hbar=self.hbar)
-        self.assertEqual(H, QuadOperator('p0', 1/self.hbar))
+        H, r = xdisplacement(self.x)
+        self.assertEqual(H, QuadOperator('p0', 1))
 
 
 class TestZDisplacement(unittest.TestCase):
@@ -97,57 +97,57 @@ class TestZDisplacement(unittest.TestCase):
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
-        H, r = zdisplacement(self.p, hbar=self.hbar)
+        H, r = zdisplacement(self.p)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_boson_operator(H, hbar=self.hbar)))
 
     def test_gaussian(self):
-        H, r = zdisplacement(self.p, hbar=self.hbar)
+        H, r = zdisplacement(self.p)
         res = H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
-        H, r = zdisplacement(self.p, hbar=self.hbar)
+        H, r = zdisplacement(self.p)
         self.assertEqual(r, self.p)
 
     def test_coefficients(self):
-        H, r = zdisplacement(self.p, hbar=self.hbar)
-        self.assertEqual(H, -QuadOperator('q0', 1/self.hbar))
+        H, r = zdisplacement(self.p)
+        self.assertEqual(H, -QuadOperator('q0', 1))
 
 
 class TestRotation(unittest.TestCase):
     def setUp(self):
         self.phi = 0.452
-        self.hbar = 2
+        self.hbar = 2.
 
     def test_identity(self):
         H, r = rotation(0)
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
-        H, r = rotation(self.phi)
+        H, r = rotation(self.phi, hbar=self.hbar)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_quad_operator(H)))
 
     def test_gaussian(self):
-        H, r = rotation(self.phi)
-        res = get_quad_operator(H).is_gaussian()
+        H, r = rotation(self.phi, hbar=self.hbar)
+        res = get_quad_operator(H, hbar=self.hbar).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
-        H, r = rotation(self.phi)
+        H, r = rotation(self.phi, hbar=self.hbar)
         self.assertEqual(r, self.phi)
 
     def test_coefficients(self):
-        H, r = rotation(self.phi)
-        self.assertEqual(H, -BosonOperator('0^ 0'))
+        H, r = rotation(self.phi, hbar=self.hbar)
+        self.assertEqual(H, -BosonOperator('0^ 0')*self.hbar)
 
     def test_quad_form(self):
-        H, r = rotation(self.phi, mode=1)
-        H = normal_ordered_quad(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
-        expected = QuadOperator('q1 q1', -1/(2*self.hbar))
-        expected += QuadOperator('p1 p1', -1/(2*self.hbar))
-        expected += QuadOperator('', 1/(self.hbar))
+        H, r = rotation(self.phi, mode=1, hbar=self.hbar)
+        H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
+        expected = QuadOperator('q1 q1', -0.5)
+        expected += QuadOperator('p1 p1', -0.5)
+        expected += QuadOperator('', 1)
         self.assertEqual(H, expected)
 
 
@@ -156,7 +156,7 @@ class TestSqueezing(unittest.TestCase):
         self.hbar = 2
         self.r = 0.242
         self.phi = 0.452
-        self.H, self.t = squeezing(self.r, self.phi)
+        self.H, self.t = squeezing(self.r, self.phi, hbar=self.hbar)
 
     def test_identity(self):
         H, t = squeezing(0)
@@ -175,9 +175,9 @@ class TestSqueezing(unittest.TestCase):
 
     def test_quad_form(self):
         H, t = squeezing(2, mode=1)
-        H = normal_ordered_quad(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
-        expected = QuadOperator('q1 p1', -1/self.hbar)
-        expected += QuadOperator('', 0.5j)
+        H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
+        expected = QuadOperator('q1 p1', -1)
+        expected += QuadOperator('', 1j)
         self.assertEqual(H, expected)
 
 
@@ -185,7 +185,7 @@ class TestQuadraticPhase(unittest.TestCase):
     def setUp(self):
         self.hbar = 2
         self.s = 0.242
-        self.H, self.t = quadratic_phase(self.s, hbar=self.hbar)
+        self.H, self.t = quadratic_phase(self.s)
 
     def test_identity(self):
         H, t = quadratic_phase(0)
@@ -203,11 +203,11 @@ class TestQuadraticPhase(unittest.TestCase):
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
-        H = normal_ordered_boson(get_boson_operator(self.H, hbar=self.hbar))
-        expected = BosonOperator('0 0', -0.25)
-        expected += BosonOperator('0^ 0', -0.5)
-        expected += BosonOperator('0^ 0^', -0.25)
-        expected += BosonOperator('', -0.25)
+        H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
+        expected = BosonOperator('0 0', -0.5)
+        expected += BosonOperator('0^ 0', -1)
+        expected += BosonOperator('0^ 0^', -0.5)
+        expected += BosonOperator('', -0.5)
         self.assertEqual(H, expected)
 
 
@@ -216,7 +216,7 @@ class TestBeamsplitter(unittest.TestCase):
         self.hbar = 2
         self.theta = 0.242
         self.phi = 0.452
-        self.H, self.t = beamsplitter(self.theta, self.phi)
+        self.H, self.t = beamsplitter(self.theta, self.phi, hbar=self.hbar)
 
     def test_identity(self):
         H, t = beamsplitter(0, 0)
@@ -234,10 +234,10 @@ class TestBeamsplitter(unittest.TestCase):
         self.assertEqual(self.t, self.theta)
 
     def test_quad_form(self):
-        H, t = beamsplitter(np.pi/4, np.pi/2, mode1=1, mode2=3)
-        H = normal_ordered_quad(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
-        expected = QuadOperator('q1 q3', -1/self.hbar)
-        expected += QuadOperator('p1 p3', -1/self.hbar)
+        H, t = beamsplitter(np.pi/4, np.pi/2, mode1=1, mode2=3, hbar=self.hbar)
+        H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
+        expected = QuadOperator('q1 q3', -1)
+        expected += QuadOperator('p1 p3', -1)
         self.assertEqual(H, expected)
 
 
@@ -246,7 +246,7 @@ class TestTwoModeSqueezing(unittest.TestCase):
         self.hbar = 2
         self.r = 0.242
         self.phi = 0.452
-        self.H, self.t = two_mode_squeezing(self.r, self.phi)
+        self.H, self.t = two_mode_squeezing(self.r, self.phi, hbar=self.hbar)
 
     def test_identity(self):
         H, t = two_mode_squeezing(0)
@@ -264,10 +264,10 @@ class TestTwoModeSqueezing(unittest.TestCase):
         self.assertEqual(self.t, self.r)
 
     def test_quad_form(self):
-        H, t = two_mode_squeezing(2, mode1=1, mode2=3)
-        H = normal_ordered_quad(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
-        expected = QuadOperator('q1 p3', 1/self.hbar)
-        expected += QuadOperator('p1 q3', 1/self.hbar)
+        H, t = two_mode_squeezing(2, mode1=1, mode2=3, hbar=self.hbar)
+        H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
+        expected = QuadOperator('q1 p3', 1)
+        expected += QuadOperator('p1 q3', 1)
         self.assertEqual(H, expected)
 
 
@@ -275,7 +275,7 @@ class TestControlledAddition(unittest.TestCase):
     def setUp(self):
         self.hbar = 2
         self.s = 0.242
-        self.H, self.t = controlled_addition(self.s, hbar=self.hbar)
+        self.H, self.t = controlled_addition(self.s)
 
     def test_identity(self):
         H, t = controlled_addition(0)
@@ -293,11 +293,11 @@ class TestControlledAddition(unittest.TestCase):
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
-        H = normal_ordered_boson(get_boson_operator(self.H, hbar=self.hbar))
-        expected = BosonOperator('0 1', -0.5j)
-        expected += BosonOperator('0 1^', 0.5j)
-        expected += BosonOperator('0^ 1', -0.5j)
-        expected += BosonOperator('0^ 1^', 0.5j)
+        H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
+        expected = BosonOperator('0 1', -1j)
+        expected += BosonOperator('0 1^', 1j)
+        expected += BosonOperator('0^ 1', -1j)
+        expected += BosonOperator('0^ 1^', 1j)
         self.assertEqual(H, expected)
 
 
@@ -305,7 +305,7 @@ class TestControlledPhase(unittest.TestCase):
     def setUp(self):
         self.hbar = 2
         self.s = 0.242
-        self.H, self.t = controlled_phase(self.s, hbar=self.hbar)
+        self.H, self.t = controlled_phase(self.s)
 
     def test_identity(self):
         H, t = controlled_phase(0)
@@ -323,11 +323,11 @@ class TestControlledPhase(unittest.TestCase):
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
-        H = normal_ordered_boson(get_boson_operator(self.H, hbar=self.hbar))
-        expected = BosonOperator('0 1', -0.5)
-        expected += BosonOperator('0 1^', -0.5)
-        expected += BosonOperator('0^ 1', -0.5)
-        expected += BosonOperator('0^ 1^', -0.5)
+        H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
+        expected = BosonOperator('0 1', -1)
+        expected += BosonOperator('0 1^', -1)
+        expected += BosonOperator('0^ 1', -1)
+        expected += BosonOperator('0^ 1^', -1)
         self.assertEqual(H, expected)
 
 
@@ -335,7 +335,7 @@ class TestCubicPhase(unittest.TestCase):
     def setUp(self):
         self.hbar = 2
         self.gamma = 0.242
-        self.H, self.t = cubic_phase(self.gamma, hbar=self.hbar)
+        self.H, self.t = cubic_phase(self.gamma)
 
     def test_identity(self):
         H, t = cubic_phase(0)
@@ -357,7 +357,7 @@ class TestKerr(unittest.TestCase):
     def setUp(self):
         self.hbar = 2
         self.kappa = 0.242
-        self.H, self.t = kerr(self.kappa)
+        self.H, self.t = kerr(self.kappa, hbar=self.hbar)
 
     def test_identity(self):
         H, t = two_mode_squeezing(0)

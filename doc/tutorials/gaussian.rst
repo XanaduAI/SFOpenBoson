@@ -29,21 +29,21 @@ Let's define this Hamiltonian using OpenFermion, with :math:`m=\omega=1` and :ma
 In the Heisenberg picture, the time-evolution of the :math:`\q` and :math:`\p` operators is given by:
 
 .. math::
-	& \frac{d}{dt}\q = i[\hat{H}, \q] = \hbar \q\\
-	& \frac{d}{dt}\p = i[\hat{H}, \q] = \hbar(F-\q)
+	& \frac{d}{dt}\q = \frac{i}{\hbar}[\hat{H}, \q] =  \q\\
+	& \frac{d}{dt}\p = \frac{i}{\hbar}[\hat{H}, \q] = (F-\q)
 
 We can double check these using OpenFermion:
 
->>> 1j*normal_ordered_quad(commutator(H, QuadOperator('q0')), hbar=2)
-2 [p0]
->>> 1j*normal_ordered_quad(commutator(H, QuadOperator('p0')), hbar=2)
-4 [] + -2 [q0]
+>>> (1j/2)*normal_ordered_quad(commutator(H, QuadOperator('q0')), hbar=2)
+1 [p0]
+>>> (1j/2)*normal_ordered_quad(commutator(H, QuadOperator('p0')), hbar=2)
+2 [] + -1 [q0]
 
 Assuming the oscillator has initial conditions :math:`\q(0)` and :math:`\p(0)`, it is easy to solve this coupled set of linear differential analytically, giving the parametrised solution
 
 .. math::
-	&\q(t) = (\q(0)-F)\cos(\hbar t) + \p(0)\sin(\hbar t) + F\\
-	&\p(t) = (F-\q(0))\sin(\hbar t) + \p(0)\cos(\hbar t)
+	&\q(t) = (\q(0)-F)\cos(t) + \p(0)\sin(t) + F\\
+	&\p(t) = (F-\q(0))\sin(t) + \p(0)\cos(t)
 
 Let's now attempt to simulate these dynamics directly in Strawberry Fields, solely from the Hamiltonian we defined above.
 
@@ -78,13 +78,13 @@ Now, we can run this simulation using the `Gaussian backend <https://strawberryf
 
 >>> state = eng.run('gaussian')
 >>> state.means()
-array([ 3.09955704, -0.20242111])
+array([ 2.35472067,  1.06027036])
 
 Comparing this to the analytic solution,
 
 .. math::
-	&\braket{\q(1.43)} = (1-2)\cos(2\times 1.43) + 0.5\sin(2\times 1.43) + 2 = 3.09956,\\
-	&\braket{\p(1.43)} = (2-1)\sin(2\times 1.43) + 0.5\cos(2\times 1.43) = -0.202421,
+	&\braket{\q(1.43)} = (1-2)\cos(1.43) + 0.5\sin(1.43) + 2 = 2.35472,\\
+	&\braket{\p(1.43)} = (2-1)\sin(1.43) + 0.5\cos(1.43) = 1.06027,
 
 which is in good agreement with the Strawberry Fields result.
 
@@ -100,7 +100,7 @@ Consider the following example:
 
 	eng, q = sf.Engine(1, hbar=2)
 
-	t_vals = np.arange(0, 1, 0.02)
+	t_vals = np.arange(0, 6, 0.02)
 	results = np.zeros([2, len(t_vals)])
 
 	for step, t in enumerate(t_vals):
@@ -113,7 +113,7 @@ Consider the following example:
 	    state = eng.run('gaussian')
 	    results[:, step] = state.means()
 
-Here, we are looping over the same circuit as above for values of :math:`t` within the domain :math:`0\leq t<1`, and storing the resulting expectation values :math:`(\braket{\q(t)}, \braket{\p(t)})` in the array ``results``. Plotting this array in the phase space:
+Here, we are looping over the same circuit as above for values of :math:`t` within the domain :math:`0\leq t<6`, and storing the resulting expectation values :math:`(\braket{\q(t)}, \braket{\p(t)})` in the array ``results``. Plotting this array in the phase space:
 
 >>> from matplotlib import pyplot as plt
 >>> plt.plot(*results)

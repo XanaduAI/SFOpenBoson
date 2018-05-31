@@ -43,7 +43,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         p = 0.3
         r = 0.42
         phi = 0.123
-        H, t = squeezing(r, phi)
+        H, t = squeezing(r, phi, hbar=self.hbar)
 
         with self.eng:
             Xgate(x) | q[0]
@@ -70,7 +70,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         x = 0.2
         p = 0.3
         phi = 0.123
-        H, t = rotation(phi)
+        H, t = rotation(phi, hbar=self.hbar)
 
         with self.eng:
             Xgate(x) | q[0]
@@ -98,7 +98,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         x = 0.2
         p = 0.3
         s = 0.432
-        H, t = quadratic_phase(s, hbar=self.hbar)
+        H, t = quadratic_phase(s)
 
         with self.eng:
             Xgate(x) | q[0]
@@ -122,7 +122,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         q = self.eng.register
 
         a = 0.2+0.3j
-        H, t = displacement(a)
+        H, t = displacement(a, hbar=self.hbar)
 
         with self.eng:
             GaussianPropagation(H, t) | q[0]
@@ -182,7 +182,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.eng.reset()
         q = self.eng.register
 
-        H, t = beamsplitter(self.th, self.phi)
+        H, t = beamsplitter(self.th, self.phi, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
 
         gate = BSgate(self.th, self.phi)
@@ -197,7 +197,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.eng.reset()
         q = self.eng.register
 
-        H, t = two_mode_squeezing(self.r, self.phi)
+        H, t = two_mode_squeezing(self.r, self.phi, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
 
         gate = S2gate(self.r, self.phi)
@@ -275,7 +275,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.eng.reset()
         q = self.eng.register
 
-        H, t = rotation(self.phi, mode=1)
+        H, t = rotation(self.phi, mode=1, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
 
         gate = Rgate(self.phi)
@@ -290,7 +290,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.eng.reset()
         q = self.eng.register
 
-        H, t = two_mode_squeezing(self.r, self.phi, mode1=0, mode2=2)
+        H, t = two_mode_squeezing(self.r, self.phi, mode1=0, mode2=2, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
 
         gate = S2gate(self.r, self.phi)
@@ -313,8 +313,8 @@ class TestQuadraticAndLinear(unittest.TestCase):
         self.dt = 0.02
 
     def displaced_oscillator_soln(self, t):
-        st = np.sin(t*self.hbar)
-        ct = np.cos(t*self.hbar)
+        st = np.sin(t)
+        ct = np.cos(t)
         x = self.p0*st + (self.x0-self.F)*ct + self.F
         p = (self.F-self.x0)*st + self.p0*ct
         return np.array([x, p])

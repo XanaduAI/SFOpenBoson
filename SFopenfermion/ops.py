@@ -161,15 +161,14 @@ class GaussianPropagation(Decomposition):
     of the quadrature operators, and calculates the corresponding Gaussian symplectic
     transformation via the following relation:
 
-    .. math:: S = e^{\Omega A t \hbar}
+    .. math:: S = e^{\Omega A t}
 
     where
 
-    * :math:`\Omega=\begin{bmatrix}0&I_N\\-I_N&0\end{bmatrix}\in\mathbb{R}^{2N\times 2N}`
-      is the symplectic matrix,
+    .. math::
+        \Omega=\begin{bmatrix}0&I_N\\-I_N&0\end{bmatrix}\in\mathbb{R}^{2N\times 2N}
 
-    * :math:`\hbar` is the convention chosen in the definition of the quadrature
-      operators, :math:`[\x,\p]=i\hbar`.
+    is the symplectic matrix.
 
     Depending on whether the resulting symplectic transformation is passive
     (photon-preserving) or active (non-photon preserving), the Clements or
@@ -230,13 +229,13 @@ class GaussianPropagation(Decomposition):
 
                 A = tmp
 
-        self.S = expm(sympmat(self.ns) @ A * t * self.hbar)
+        self.S = expm(sympmat(self.ns) @ A * t)
 
         self.disp = False
         if not np.all(d == 0.):
             self.disp = True
             if np.all(A == 0.):
-                self.d = d*self.hbar*t
+                self.d = d*t
             else:
                 if np.linalg.cond(A) < 1/sys.float_info.epsilon:
                     s = inv(A) @ d

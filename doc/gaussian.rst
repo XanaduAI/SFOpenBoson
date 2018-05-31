@@ -48,7 +48,7 @@ this corresponds to a Hamiltonian of the form :cite:`weedbrook2012`
 
 where :math:`\av = (\a_1, \a_2,\dots,\a_N)`, :math:`\mathbf{w}\in\mathbb{C}^N` and :math:`F,G\in\mathbb{C}^{N\times N}`. This corresponds to a linear unitary `Bogoliubov transform <https://en.wikipedia.org/wiki/Bogoliubov_transformation>`_ of the annihilation and creation operators:
 
-.. math:: e^{-iHt}\a e^{-iHt} = A\a + B\ad + \mathbf{w}
+.. math:: e^{-i\hat{H}t/\hbar}\a e^{i\hat{H}t/\hbar} = A\a + B\ad + \mathbf{w}
 
 where :math:`AB^T=BA^T` and :math:`AA^\dagger = BB^\dagger+\I`.
 
@@ -65,19 +65,19 @@ where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}` (this quantity can always be calcula
 Zero linear coefficients
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the Heisenberg picture, with :math:`\hat{H}=\frac{1}{2}\r A\r`, the time-evolution of the quadrature operators must satisfy the following differential equation:
+In the Heisenberg picture, with :math:`\hat{H}=\frac{1}{2}\r A\r`, the time-evolution of the quadrature operators must satisfy the Heisenberg equations of motion:
 
-.. math:: \frac{d}{dt}\r_j = \frac{i}{\hbar}[\hat{H},\r_j] ~~\Leftrightarrow ~~ \frac{d}{dt}\r = \Omega A \hbar\r ,
+.. math:: \frac{d}{dt}\r_j = \frac{i}{\hbar}[\hat{H},\r_j] ~~\Leftrightarrow ~~ \frac{d}{dt}\r = \Omega A \r ,
 
 where
 
 .. math::  \Omega = \begin{bmatrix} 0 & \I_N \\-\I_N & 0 \\\end{bmatrix}
 
-is the `symplectic matrix <https://en.wikipedia.org/wiki/Symplectic_matrix>`_; this, along with :math:`\hbar`, come from the definition of the canonical commutation relation :math:`[\r_i,\r_j]=i\hbar \Omega_{ij}`.
+is the `symplectic matrix <https://en.wikipedia.org/wiki/Symplectic_matrix>`_, coming from the definition of the canonical commutation relation :math:`[\r_i,\r_j]=i\hbar \Omega_{ij}`.
 
 Solving this differential equation, we find that the symplectic Gaussian transformation describing the time-evolution of the Hamiltonian :math:`\hat{H}` acting on the quadrature operators, for time :math:`t`, is given by:
 
-.. math:: S = \exp{\left(\Omega A \hbar t\right)}
+.. math:: S = \exp{\left(\Omega A t\right)}
 
 
 Non-zero linear coefficients
@@ -94,25 +94,25 @@ where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}`, as before. This corresponds to the 
 
 Calculating the time-evolution operator,
 
-.. math:: \hat{U}(t) = e^{-i\hat{H}(d) t} = e^{-i\hat{D}(\mathbf{s})\hat{H}(0)\hat{D}(\mathbf{s})^\dagger t} = \hat{D}(\mathbf{s})e^{-i\hat{H}(0) t}\hat{D}(\mathbf{s})^\dagger.
+.. math:: \hat{U}(t) = e^{-i\hat{H}(d) t/\hbar} = e^{-i\hat{D}(\mathbf{s})\hat{H}(0)\hat{D}(\mathbf{s})^\dagger t} = \hat{D}(\mathbf{s})e^{-i\hat{H}(0) t}\hat{D}(\mathbf{s})^\dagger.
 
 In order to write this as a symplectic matrix transformation, we need to move all displacement operators to the left. To do this, we can post-multiply by :math:`\I=e^{i\hat{H}(0)t}e^{-i\hat{H}(0)t}`:
 
 .. math::
 	\hat{U}(t) = \hat{D}(\mathbf{s})\left[e^{-i\hat{H}(0) t}\hat{D}(\mathbf{s})^\dagger e^{i\hat{H}(0)t}\right]e^{-i\hat{H}(0)t}
 
-Finally, we can rewrite this as a symplectic transformation, by making the substitution :math:`e^{-i\hat{H}(0)t}\rightarrow e^{\Omega A \hbar t}` and by noting that the bracketed term is simply a displacement by :math:`-\mathbf{s}`, evolved under :math:`\hat{H}(0)` for time :math:`t`:
+Finally, we can rewrite this as a symplectic transformation, by making the substitution :math:`e^{-i\hat{H}(0)t}\rightarrow e^{\Omega A t}` and by noting that the bracketed term is simply a displacement by :math:`-\mathbf{s}`, evolved under :math:`\hat{H}(0)` for time :math:`t`:
 
 .. math::
-	S = \hat{D}(\mathbf{s} -{e^{\Omega A \hbar t}}^T \mathbf{s}) e^{\Omega A \hbar t}
+	S = \hat{D}(\mathbf{s} -{e^{\Omega A t}}^T \mathbf{s}) e^{\Omega A \hbar t}
 
 
 .. admonition:: Definition
 	:class: defn
 
-	For a quadratic Hamiltonian of the form :math:`\hat{H} = \frac{1}{2}\r A\r + \r^T \mathbf{d}`, the symplectic transformation :math:`S\in\mathbb{R}^{2N\times 2N}` characterizing the time-evolution unitary operator :math:`\hat{U}(t) = e^{-i\hat{H}t}` is given by
+	For a quadratic Hamiltonian of the form :math:`\hat{H} = \frac{1}{2}\r A\r + \r^T \mathbf{d}`, the symplectic transformation :math:`S\in\mathbb{R}^{2N\times 2N}` characterizing the time-evolution unitary operator :math:`\hat{U}(t) = e^{-i\hat{H}t/\hbar}` is given by
 
-	.. math:: S = \hat{D}(\mathbf{s} -{e^{\Omega A \hbar t}}^T \mathbf{s}) e^{\Omega A \hbar t}
+	.. math:: S = \hat{D}(\mathbf{s} -{e^{\Omega A t}}^T \mathbf{s}) e^{\Omega A t}
 
 	where :math:`\Omega` is the symplectic matrix, :math:`\hat{D}` the displacement operation, and :math:`\mathbf{s} = -A^{-1}\mathbf{d}/\sqrt{2\hbar}`.
 
