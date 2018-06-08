@@ -76,13 +76,15 @@ import numpy as np
 from scipy.linalg import expm, inv
 
 from strawberryfields.ops import (Xgate, Zgate,
-    Decomposition, GaussianTransform)
+    Decomposition, GaussianTransform, BSgate, Kgate, Rgate)
 from strawberryfields.engine import Engine as _Engine, Command
 from strawberryfields.backends.shared_ops import sympmat, changebasis
 
 from openfermion.ops import QuadOperator, BosonOperator
 from openfermion.transforms import get_quad_operator
 from openfermion.utils import is_hermitian, prune_unused_indices
+
+from ._bose_hubbard_trotter import trotter_layer
 
 
 def quadratic_coefficients(operator):
@@ -252,4 +254,83 @@ class GaussianPropagation(Decomposition):
         if self.disp:
             cmds += [Command(Xgate(x), reg, decomp=True) for x in self.d[:self.ns] if x != 0.]
             cmds += [Command(Zgate(z), reg, decomp=True) for z in self.d[self.ns:] if z != 0.]
+        return cmds
+
+
+class BoseHubbardPropagation(Decomposition):
+    r"""Propagate the specified qumodes by a Bose-Hubbard Hamiltonians.
+
+    Args:
+        operator (BosonOperator, QuadOperator): a bosonic Gaussian Hamiltonian
+        t (float): the time propagation value. If not provided, default value is 1.
+        k (int): the number of products in the truncated Lie product formula.
+        mode (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only
+            the applied qumodes (q[i], q[j],...). I.e., a_0 applies to q[i], a_1 applies to q[j].
+            If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register;
+            i.e., a_0 applied to q[0], applies to q[1], etc.
+        hbar (float): the value of :math:`\hbar` used in the definition of the :math:`\x`
+            and :math:`\p` quadrature operators. Note that if used inside of an engine
+            context, the hbar value of the engine will override this keyword argument.
+    """
+    ns = None
+    def __init__(self, operator, t=1, k=20, mode='local', hbar=None):
+        super().__init__([t, operator])
+
+        try:
+            self.hbar = _Engine._current_context.hbar
+        except AttributeError:
+            if hbar is None:
+                raise ValueError("Either specify the hbar keyword argument, "
+                                 "or use this operator inside an engine context.")
+            else:
+                self.hbar = hbar
+
+        if not is_hermitian(operator):
+            raise ValueError("Hamiltonian must be Hermitian.")
+
+        if (not isinstance(k, int)) or k < 0:
+            raise ValueError("Argument k must be a postive integer.")
+
+        if mode == 'local':
+            boson_operator = prune_unused_indices(operator)
+        elif mode == 'global':
+            boson_operator = operator
+
+        if isinstance(boson_operator, QuadOperator):
+            boson_operator = get_boson_operator(boson_operator, hbar=self.hbar)
+
+        self.layer = trotter_layer(boson_operator, t, k)
+        self.num_layers = k
+
+        num_modes = max([op[0] for term in operator.terms for op in term])+1
+
+        if mode == 'local':
+            self.ns = num_modes
+        elif mode == 'global':
+            self.ns = _Engine._current_context.num_subsystems
+
+    def decompose(self, reg):
+        # make BS gate
+        theta = self.layer['BS'][0]
+        phi = self.layer['BS'][1]
+        BS = BSgate(theta, phi)
+
+        # make Kerr gate
+        K = Kgate(self.layer['K'][0])
+
+        # make rotation gate
+        R = Rgate(self.layer['R'][0])
+
+        cmds = []
+
+        for i in range(self.num_layers):
+            for q0, q1 in self.layer['BS'][2]:
+                cmds.append(Command(BS, (reg[q0], reg[q1])))
+
+            for mode in self.layer['K'][1]:
+                cmds.append(Command(K, reg[mode]))
+
+            for mode in self.layer['R'][1]:
+                cmds.append(Command(R, reg[mode]))
+
         return cmds

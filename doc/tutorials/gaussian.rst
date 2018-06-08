@@ -12,7 +12,7 @@ Background
 
 The Hamiltonian of the forced quantum harmonic oscillator is given by 
 
-.. math:: \hat{H} = \frac{\p^2}{2m} + \frac{1}{2}m\omega^2 \q^2 + F\q
+.. math:: \hat{H} = \frac{\p^2}{2m} + \frac{1}{2}m\omega^2 \q^2 - F\q
 
 where
 
@@ -22,21 +22,21 @@ where
 
 Let's define this Hamiltonian using OpenFermion, with :math:`m=\omega=1` and :math:`F=2`:
 
->>> from openfermion.ops import QuadOperator, normal_ordered_quad
->>> from openfermion.utils import commutator
+>>> from openfermion.ops import QuadOperator
+>>> from openfermion.utils import commutator, normal_ordered
 >>> H = QuadOperator('q0 q0', 0.5) + QuadOperator('p0 p0', 0.5) - QuadOperator('q0', 2)
 
 In the Heisenberg picture, the time-evolution of the :math:`\q` and :math:`\p` operators is given by:
 
 .. math::
-	& \frac{d}{dt}\q = \frac{i}{\hbar}[\hat{H}, \q] =  \q\\
-	& \frac{d}{dt}\p = \frac{i}{\hbar}[\hat{H}, \q] = (F-\q)
+	& \frac{d}{dt}\q = \frac{i}{\hbar}[\hat{H}, \q] =  \p\\
+	& \frac{d}{dt}\p = \frac{i}{\hbar}[\hat{H}, \q] = F-\q
 
 We can double check these using OpenFermion:
 
->>> (1j/2)*normal_ordered_quad(commutator(H, QuadOperator('q0')), hbar=2)
+>>> (1j/2)*normal_ordered(commutator(H, QuadOperator('q0')), hbar=2)
 1 [p0]
->>> (1j/2)*normal_ordered_quad(commutator(H, QuadOperator('p0')), hbar=2)
+>>> (1j/2)*normal_ordered(commutator(H, QuadOperator('p0')), hbar=2)
 2 [] + -1 [q0]
 
 Assuming the oscillator has initial conditions :math:`\q(0)` and :math:`\p(0)`, it is easy to solve this coupled set of linear differential analytically, giving the parametrised solution
@@ -87,6 +87,15 @@ Comparing this to the analytic solution,
 	&\braket{\p(1.43)} = (2-1)\sin(1.43) + 0.5\cos(1.43) = 1.06027,
 
 which is in good agreement with the Strawberry Fields result.
+
+We can also print the CV gates applied by the engine, to see how our time-evolution operator :math:`e^{-i\hat{H}t/\hbar}` got decomposed:
+
+>>> eng.print_applied()
+Xgate(1), 	(reg[0])
+Zgate(0.5), 	(reg[0])
+Rgate(-1.43), 	(reg[0])
+Xgate(1.719), 	(reg[0])
+Zgate(1.98), 	(reg[0])
 
 
 Plotting the phase space time-evolution

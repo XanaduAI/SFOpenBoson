@@ -100,7 +100,7 @@ def rotation(phi, mode=0, hbar=2):
         R(\phi) = \exp\left(i \phi \ad \a\right)
         =\exp\left(i \frac{\phi}{2} \left(\frac{\x^2+  \p^2}{\hbar}-I\right)\right)
 
-    Therefore, :math:`U=e^{-iHt/\hbar}` where :math:`H = -\hbar\ad\a$ and :math:`t=\phi`.
+    Therefore, :math:`U=e^{-iHt/\hbar}` where :math:`H = -\hbar\ad\a` and :math:`t=\phi`.
 
     Args:
         phi (float): the rotation angle
@@ -123,7 +123,7 @@ def squeezing(r, phi=0, mode=0, hbar=2):
         S(r,\phi) = \exp\left(\frac{r}{2}\left(e^{-i\phi}\a^2 -e^{i\phi}{\ad}^{2} \right) \right)
 
     Therefore, :math:`U=e^{-iHt/\hbar}` where
-    :math:`H =  frac{i\hbar}{2}\left(e^{-i\phi}\a^2 -e^{i\phi}{\ad}^{2}\right)` and :math:`t=r`.
+    :math:`H =  \frac{i\hbar}{2}\left(e^{-i\phi}\a^2 -e^{i\phi}{\ad}^{2}\right)` and :math:`t=r`.
 
     Args:
         r (float): the squeezing magnitude
@@ -208,7 +208,7 @@ def two_mode_squeezing(r, phi=0, mode1=0, mode2=1, hbar=2):
         r (float): the squeezing magnitude
         phi (float): the quadrature in which the squeezing occurs.
             :math:`\phi=0` corresponds to squeezing in the :math:`\x` quadrature,
-            and :math:`\phi=np.pi/2` corresponds to squeezing in the
+            and :math:`\phi=\pi/2` corresponds to squeezing in the
             :math:`\p` quadrature.
         mode1 (int): the first qumode :math:`\a_0` on which the operation acts
         mode2 (int): the second qumode :math:`\a_1` on which the operation acts
