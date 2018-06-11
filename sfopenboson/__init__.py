@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""SF-OpenFermion"""
+"""SFOpenBoson"""
 from __future__ import unicode_literals
 from ._version import __version__
 
@@ -20,7 +20,7 @@ __all__ = ['version']
 
 def version():
     r"""
-    Get version number of SF-OpenFermion
+    Get version number of SFOpenBoson
 
     Returns:
       str: The package version number

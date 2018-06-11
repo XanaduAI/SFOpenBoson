@@ -1,4 +1,4 @@
-SF-OpenFermion
+SFOpenBoson
 ##############
 
 :Release: |release|
@@ -26,7 +26,7 @@ Features
 Getting started
 ===============
 
-To get the SF-OpenFermion plugin installed and running on your system, begin at the :ref:`download and installation guide <installation>`. Then, familiarise yourself with some background information on the time-propagation of :ref:`Gaussian Hamiltonians <gaussian_hamiltonians>` and :ref:`the Bose-Hubbard model <bosehubbard>`.
+To get the SFOpenBoson plugin installed and running on your system, begin at the :ref:`download and installation guide <installation>`. Then, familiarise yourself with some background information on the time-propagation of :ref:`Gaussian Hamiltonians <gaussian_hamiltonians>` and :ref:`the Bose-Hubbard model <bosehubbard>`.
 
 For getting started with using the Hafnian library in your own code, have a look at the provided :ref:`tutorials <tutorial_gaussian>`.
 
@@ -35,15 +35,15 @@ Finally, detailed documentation on the code and API is provided.
 Support
 =======
 
-- **Source Code:** https://github.com/XanaduAI/SF-OpenFermion
-- **Issue Tracker:** https://github.com/XanaduAI/SF-OpenFermion/issues
+- **Source Code:** https://github.com/XanaduAI/SFOpenBoson
+- **Issue Tracker:** https://github.com/XanaduAI/SFOpenBoson/issues
 
 If you are having issues, please let us know, either by email or by posting the issue on our Github issue tracker.
 
 License
 =======
 
-SF-OpenFermion is **free** and **open source**, released under the Apache License, Version 2.0.
+SFOpenBoson is **free** and **open source**, released under the Apache License, Version 2.0.
 
 .. toctree::
    :maxdepth: 2

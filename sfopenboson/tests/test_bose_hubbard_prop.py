@@ -25,7 +25,7 @@ from openfermion.hamiltonians import bose_hubbard
 import strawberryfields as sf
 from strawberryfields.ops import Fock, Sgate
 
-from SFopenfermion.ops import BoseHubbardPropagation
+from sfopenboson.ops import BoseHubbardPropagation
 
 
 class TestBoseHubbardPropagation(unittest.TestCase):

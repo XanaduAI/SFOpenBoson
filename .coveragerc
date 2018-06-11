@@ -1,6 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
-source = SFopenfermion
+source = sfopenboson
 
 [report]
 # Regexes for lines to exclude from consideration

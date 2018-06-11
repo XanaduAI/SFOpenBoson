@@ -118,7 +118,7 @@ Finally, we can rewrite this as a symplectic transformation, by making the subst
 
 .. tip::
 
-   *Implemented in SF-OpenFermion as a quantum operation by* :class:`SFopenfermion.ops.GaussianPropagation`
+   *Implemented in SFOpenBoson as a quantum operation by* :class:`sfopenboson.ops.GaussianPropagation`
 
 
 .. warning::

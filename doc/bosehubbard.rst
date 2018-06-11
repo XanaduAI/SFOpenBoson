@@ -68,6 +68,6 @@ Comparing these individual bracketed operators with the known CV gate set (see `
 
 .. tip::
 
-   *Implemented in SF-OpenFermion as a quantum operation by* :class:`SFopenfermion.ops.BoseHubbardPropagation`
+   *Implemented in SFOpenBoson as a quantum operation by* :class:`sfopenboson.ops.BoseHubbardPropagation`
 
 

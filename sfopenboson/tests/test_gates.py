@@ -21,7 +21,7 @@ from openfermion.ops import BosonOperator, QuadOperator
 from openfermion.utils import is_hermitian, normal_ordered
 from openfermion.transforms import get_boson_operator, get_quad_operator
 
-from SFopenfermion.hamiltonians import (displacement,
+from sfopenboson.hamiltonians import (displacement,
                                         xdisplacement,
                                         zdisplacement,
                                         rotation,

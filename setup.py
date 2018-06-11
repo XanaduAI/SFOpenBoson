@@ -18,7 +18,7 @@ import os
 from setuptools import setup
 # from sphinx.setup_command import BuildDoc
 
-with open("SFopenfermion/_version.py") as f:
+with open("sfopenboson/_version.py") as f:
 	version = f.readlines()[-1].split()[-1].strip("\"'")
 
 # cmdclass = {'build_docs': BuildDoc}
@@ -31,22 +31,22 @@ requirements = [
 ]
 
 info = {
-    'name': 'SF-OpenFermion',
+    'name': 'SFOpenBoson',
     'version': version,
     'maintainer': 'Xanadu Inc.',
     'maintainer_email': 'josh@xanadu.ai',
     'url': 'http://xanadu.ai',
     'license': 'Apache License 2.0',
     'packages': [
-                    'SFopenfermion',
-                    'SFopenfermion.hamiltonians',
-                    'SFopenfermion.tests'
+                    'sfopenboson',
+                    'sfopenboson.hamiltonians',
+                    'sfopenboson.tests'
                 ],
-    # 'package_data': {'SFopenfermion': ['backends/data/*']},
+    # 'package_data': {'sfopenboson': ['backends/data/*']},
     # 'include_package_data': True,
     'description': 'Open source library for continuous-variable quantum computation',
     'long_description': open('README.rst').read(),
-    'provides': ["SFopenfermion"],
+    'provides': ["sfopenboson"],
     'install_requires': requirements,
     # 'extras_require': extra_requirements,
     'command_options': {

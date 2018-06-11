@@ -1,4 +1,4 @@
-.. automodule:: SFopenfermion.hamiltonians
+.. automodule:: sfopenboson.hamiltonians
 	:members:
 	:inherited-members:
 	:private-members:

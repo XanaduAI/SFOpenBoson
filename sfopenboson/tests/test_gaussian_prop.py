@@ -30,7 +30,7 @@ from strawberryfields.ops import (BSgate,
 
 from strawberryfields.backends.shared_ops import rotation_matrix as rot
 
-from SFopenfermion.hamiltonians import (displacement,
+from sfopenboson.hamiltonians import (displacement,
                                         rotation,
                                         squeezing,
                                         quadratic_phase,
@@ -39,7 +39,7 @@ from SFopenfermion.hamiltonians import (displacement,
                                         controlled_addition,
                                         controlled_phase)
 
-from SFopenfermion.ops import GaussianPropagation
+from sfopenboson.ops import GaussianPropagation
 
 
 class TestSingularCoefficients(unittest.TestCase):

@@ -105,7 +105,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'SF-openfermion'
+project = 'SFOpenBoson'
 copyright = '2018, Xanadu Quantum Technologies Inc'
 author = 'Xanadu Inc.'
 
@@ -114,8 +114,8 @@ author = 'Xanadu Inc.'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-import SFopenfermion
-release = SFopenfermion.version()
+import sfopenboson
+release = sfopenboson.version()
 
 # The short X.Y version.
 version = re.match(r'^(\d+\.\d+)', release).expand(r'\1')
@@ -281,7 +281,7 @@ html_sidebars = {
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SFopenfermiondoc'
+htmlhelp_basename = 'SFOpenBosondoc'
 
 # # -- Xanadu theme ---------------------------------------------------------
 html_theme = 'xanadu_theme'
@@ -297,7 +297,7 @@ html_theme_options = {
     # "index_template": "special_index.html",
 
     # Set the name of the project to appear in the left sidebar.
-    "project_nav_name": "SFopenfermion",
+    "project_nav_name": "SFOpenBoson",
 
     # Set your Disqus short name to enable comments
     # "disqus_comments_shortname": "my_disqus_comments_short_name",
@@ -319,7 +319,7 @@ html_theme_options = {
     # "projectlink": "http://myproject.url",
 }
 
-edit_on_github_project = 'XanaduAI/SFopenfermion'
+edit_on_github_project = 'XanaduAI/SFOpenBoson'
 edit_on_github_branch = 'master/doc'
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -344,7 +344,7 @@ latex_additional_files = ['macros.tex']
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'SFopenfermion.tex', 'SFopenfermion',
+    (master_doc, 'SFOpenBoson.tex', 'SFOpenBoson',
      'Xanadu Quantum Technologies Inc.', 'manual'),
 ]
 
@@ -374,7 +374,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'SFopenfermion', 'SFopenfermion',
+    (master_doc, 'SFOpenBoson', 'SFOpenBoson',
      [author], 1)
 ]
 
@@ -388,8 +388,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'SFopenfermion', 'SFopenfermion',
-     author, 'SFopenfermion', 'One line description of project.',
+    (master_doc, 'SFOpenBoson', 'SFOpenBoson',
+     author, 'SFOpenBoson', 'One line description of project.',
      'Miscellaneous'),
 ]
 

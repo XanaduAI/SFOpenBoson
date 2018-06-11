@@ -5,7 +5,7 @@ Forced quantum harmonic oscillator
 
 .. sectionauthor:: Josh Izaac <josh@xanadu.ai>
 
-Acting a Gaussian Hamiltonian defined in OpenFermion, on a continuous-variable (CV) quantum photonics simulation in Strawberry Fields, is simple with the SF-OpenFermion. In this tutorial, I will walk through a simple example using the forced quantum harmonic oscillator.
+Acting a Gaussian Hamiltonian defined in OpenFermion, on a continuous-variable (CV) quantum photonics simulation in Strawberry Fields, is simple with the SFOpenBoson. In this tutorial, I will walk through a simple example using the forced quantum harmonic oscillator.
 
 Background
 ----------
@@ -50,11 +50,11 @@ Let's now attempt to simulate these dynamics directly in Strawberry Fields, sole
 Strawberry Fields simulation
 ----------------------------
 
-To simulate the time-propagation of the forced oscillator in StrawberryFields, we also need to import the :class:`~.GaussianPropagation` class from the SF-OpenFermion plugin:
+To simulate the time-propagation of the forced oscillator in StrawberryFields, we also need to import the :class:`~.GaussianPropagation` class from the SFOpenBoson plugin:
 
 >>> import strawberryfields as sf
 >>> from strawberryfields.ops import *
->>> from Sfopenfermion.ops import GaussianPropagation
+>>> from sfopenboson.ops import GaussianPropagation
 
 :class:`~.GaussianPropagation` accepts the following arguments:
 

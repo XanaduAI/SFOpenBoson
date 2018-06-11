@@ -1,4 +1,4 @@
-SF-OpenFermion
+SFOpenBoson
 ==============
 
 `Strawberry Fields <http://github.com/XanaduAI/strawberryfields>`_ is a full-stack Python library for
@@ -29,13 +29,13 @@ Installation
 Installation of Strawberry Fields, as well as all required Python packages mentioned above, can be done using pip:
 ::
 
-    $ python -m pip install sf-openfermion
+    $ python -m pip install sfopenboson
 
 
 Software tests
 --------------
 
-To ensure that the SF-OpenFermion plugin is working correctly after installation, the test suite can be run by navigating to the source code folder and running: ::
+To ensure that the SFOpenBoson plugin is working correctly after installation, the test suite can be run by navigating to the source code folder and running: ::
 
 	$ make test
 
@@ -43,7 +43,7 @@ To ensure that the SF-OpenFermion plugin is working correctly after installation
 Documentation
 -------------
 
-The SF-OpenFermion documentation is built automatically and hosted at `Read the Docs <https://sf-openfermion.readthedocs.io>`_.
+The SFOpenBoson documentation is built automatically and hosted at `Read the Docs <https://sfopenboson.readthedocs.io>`_.
 
 To build the documentation locally, the following additional packages are required:
 
@@ -75,8 +75,8 @@ If you are doing research using Strawberry Fields, please cite `our whitepaper <
 Support
 -------
 
-- **Source Code:** https://github.com/XanaduAI/SF-OpenFermion
-- **Issue Tracker:** https://github.com/XanaduAI/SF-OpenFermion/issues
+- **Source Code:** https://github.com/XanaduAI/SFOpenBoson
+- **Issue Tracker:** https://github.com/XanaduAI/SFOpenBoson/issues
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker.
 
@@ -87,4 +87,4 @@ come join the discussion and chat with our Strawberry Fields team.
 License
 -------
 
-SF-OpenFermion is **free** and **open source**, released under the Apache License, Version 2.0.
+SFOpenBoson is **free** and **open source**, released under the Apache License, Version 2.0.

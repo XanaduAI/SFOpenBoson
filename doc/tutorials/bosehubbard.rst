@@ -25,15 +25,15 @@ OpenFermion provides a convenient Hamiltonian function to automatically generate
 
 For more information regarding this function, please see the `OpenFermion documentation <http://openfermion.readthedocs.io/en/latest/openfermion.html#openfermion.hamiltonians.bose_hubbard>`_).
 
-Let's use this capability, along with the Hamiltonian propagation and decomposition tools of the SF-OpenFermion plugin, to perform Bose-Hubbard simulations in Strawberry Fields. Consider the `Hamiltonian simulation <https://strawberryfields.readthedocs.io/en/latest/algorithms/hamiltonian_simulation.html>`_ algorithm in the Strawberry Fields documentation; to reproduce these results, we first generate a Bose-Hubbard Hamiltonian on a non-periodic :math:`1\times 2` lattice, with tunneling coefficient -1, and on-site interaction strength 1.5.
+Let's use this capability, along with the Hamiltonian propagation and decomposition tools of the SFOpenBoson plugin, to perform Bose-Hubbard simulations in Strawberry Fields. Consider the `Hamiltonian simulation <https://strawberryfields.readthedocs.io/en/latest/algorithms/hamiltonian_simulation.html>`_ algorithm in the Strawberry Fields documentation; to reproduce these results, we first generate a Bose-Hubbard Hamiltonian on a non-periodic :math:`1\times 2` lattice, with tunneling coefficient -1, and on-site interaction strength 1.5.
 
 >>> H = bose_hubbard(1, 2, 1, 1.5)
 
-To simulate the time-propagation of the Hamiltonian in StrawberryFields, we also need to import the :class:`~.BoseHubbardPropagation` class from the SF-OpenFermion plugin:
+To simulate the time-propagation of the Hamiltonian in StrawberryFields, we also need to import the :class:`~.BoseHubbardPropagation` class from the SFOpenBoson plugin:
 
 >>> import strawberryfields as sf
 >>> from strawberryfields.ops import *
->>> from SFopenfermion.ops import BoseHubbardPropagation
+>>> from sfopenboson.ops import BoseHubbardPropagation
 
 :class:`~.BoseHubbardPropagation` accepts the following arguments:
 

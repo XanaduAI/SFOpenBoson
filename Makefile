@@ -4,13 +4,13 @@ COVERAGE3 := $(shell which coverage3 2>/dev/null)
 PYTHON := python3
 COVERAGE := coverage3
 COPTS := run #--append
-TESTRUNNER := -m unittest discover SFopenfermion/tests
+TESTRUNNER := -m unittest discover sfopenboson/tests
 
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  install            to install SF-OpenFermion"
-	@echo "  wheel              to build the SF-OpenFermion wheel"
+	@echo "  install            to install SFOpenBoson"
+	@echo "  wheel              to build the SFOpenBoson wheel"
 	@echo "  dist               to package the source distribution"
 	@echo "  clean              to delete all temporary, cache, and build files"
 	@echo "  clean-docs         to delete all built documentation"
@@ -22,7 +22,7 @@ help:
 .PHONY: install
 install:
 ifndef PYTHON3
-	@echo "To install SF-OpenFermion you need to have Python 3 installed"
+	@echo "To install SFOpenBoson you need to have Python 3 installed"
 endif
 	$(PYTHON) setup.py install
 
@@ -36,8 +36,8 @@ dist:
 
 .PHONY : clean
 clean:
-	rm -rf SFopenfermion/__pycache__
-	rm -rf SFopenfermion/tests/__pycache__
+	rm -rf sfopenboson/__pycache__
+	rm -rf sfopenboson/tests/__pycache__
 	rm -rf dist
 	rm -rf build
 

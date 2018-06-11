@@ -21,14 +21,14 @@ from openfermion.ops import BosonOperator, QuadOperator
 from openfermion.transforms import get_quad_operator
 from openfermion.hamiltonians import bose_hubbard
 
-from SFopenfermion.auxillary import (BoseHubbardError,
+from sfopenboson.auxillary import (BoseHubbardError,
                                      quadratic_coefficients,
                                      extract_tunneling,
                                      extract_onsite_chemical,
                                      extract_dipole,
                                      trotter_layer)
 
-from SFopenfermion.hamiltonians import (displacement,
+from sfopenboson.hamiltonians import (displacement,
                                         xdisplacement,
                                         zdisplacement,
                                         rotation,
