@@ -12,7 +12,7 @@ This Strawberry Fields plugin library allows Strawberry Fields to interface with
 Dependencies
 -------------
 
-Strawberry Fields depends on the following Python packages:
+SFOpenBoson depends on the following Python packages:
 
 * `Python <http://python.org/>`_ >=3.5
 * `NumPy <http://numpy.org/>`_  >=1.13.3
