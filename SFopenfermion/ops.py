@@ -59,89 +59,38 @@ BSgate(-1.571, 0)   | (q[1], q[2])
 Rgate(3.142)    | (q[0])
 
 
-Summary
--------
+Blackbird quantum operations
+----------------------------
 
 .. autosummary::
-    quadratic_coefficients
     GaussianPropagation
+    BoseHubbardPropagation
 
 Code details
 ------------
 """
+# pylint: disable=abstract-method,too-many-branches,too-many-arguments
 
 import sys
 
 import numpy as np
 from scipy.linalg import expm, inv
 
-from strawberryfields.ops import (Xgate, Zgate,
-    Decomposition, GaussianTransform, BSgate, Kgate, Rgate)
-from strawberryfields.engine import Engine as _Engine, Command
-from strawberryfields.backends.shared_ops import sympmat, changebasis
-
 from openfermion.ops import QuadOperator, BosonOperator
-from openfermion.transforms import get_quad_operator
+from openfermion.transforms import get_quad_operator, get_boson_operator
 from openfermion.utils import is_hermitian, prune_unused_indices
 
-from ._bose_hubbard_trotter import trotter_layer
+from strawberryfields.ops import (BSgate,
+                                  Decomposition,
+                                  GaussianTransform,
+                                  Kgate,
+                                  Rgate,
+                                  Xgate,
+                                  Zgate)
+from strawberryfields.engine import Engine as _Engine, Command
+from strawberryfields.backends.shared_ops import sympmat
 
-
-def quadratic_coefficients(operator):
-    r"""Return the quadratic coefficient matrix representing a Gaussian Hamiltonian.
-
-    A Gaussian Hamiltonian is any combination of quadratic operators
-    that can be written in quadratic form:
-
-    .. math:: H = \frac{1}{2}\mathbf{r}A\mathbf{r} + \mathbf{r}^T \mathbf{d}
-
-    where :math:`A\in\mathbb{R}^{2N\times 2N}` is a symmetric matrix,
-    :math:`\mathbf{d}\in\mathbb{R}^{2N}` is a real vector, and
-    :math:`\mathbf{r} = (\x_1,\dots,\x_N,\p_1,\dots,\p_N)` is the vector
-    of means in :math:`xp`-ordering.
-
-    This function accepts a bosonic Gaussian Hamiltonian, and returns the
-    matrix :math:`A` and vector :math:`\mathbf{d}` representing the
-    quadratic and linear coefficients.
-
-    Args:
-        operator (QuadOperator): a bosonic Gaussian Hamiltonian
-    Returns:
-        tuple(A, d): a tuple contains a 2Nx2N real symmetric numpy array,
-            and a length 2N real numpy array, where N is the number of modes
-            the operator acts on.
-    """
-    if not operator.is_gaussian():
-        raise ValueError("Hamiltonian must be Gaussian "
-                         "(quadratic in the quadrature operators).")
-
-    if not is_hermitian(operator):
-        raise ValueError("Hamiltonian must be Hermitian.")
-
-    num_modes = max([op[0] for term in operator.terms for op in term])+1
-    A = np.zeros([2*num_modes, 2*num_modes])
-    d = np.zeros([2*num_modes])
-    for term, coeff in operator.terms.items():
-        c = coeff.real
-        if len(term) == 2:
-            if term[0][1] == term[1][1]:
-                if term[0][1] == 'q':
-                    A[term[0][0], term[1][0]] = c
-                elif term[0][1] == 'p':
-                    A[num_modes+term[0][0], num_modes+term[1][0]] = c
-            else:
-                if term[0][1] == 'q':
-                    A[term[0][0], num_modes+term[1][0]] = c
-                elif term[0][1] == 'p':
-                    A[num_modes+term[0][0], term[1][0]] = c
-        elif len(term) == 1:
-            if term[0][1] == 'q':
-                d[num_modes+term[0][0]] = -c
-            elif term[0][1] == 'p':
-                d[term[0][0]] = c
-
-    A += A.T
-    return A, d
+from .auxillary import trotter_layer, quadratic_coefficients
 
 
 class GaussianPropagation(Decomposition):
@@ -193,6 +142,7 @@ class GaussianPropagation(Decomposition):
         super().__init__([t, operator])
 
         try:
+            # pylint: disable=protected-access
             self.hbar = _Engine._current_context.hbar
         except AttributeError:
             if hbar is None:
@@ -217,6 +167,7 @@ class GaussianPropagation(Decomposition):
         if mode == 'local':
             self.ns = A.shape[0]//2
         elif mode == 'global':
+            # pylint: disable=protected-access
             self.ns = _Engine._current_context.num_subsystems
             if A.shape[0] < 2*self.ns:
                 # expand the quadratic coefficient matrix to take
@@ -239,14 +190,20 @@ class GaussianPropagation(Decomposition):
             if np.all(A == 0.):
                 self.d = d*t
             else:
-                if np.linalg.cond(A) < 1/sys.float_info.epsilon:
+                if np.linalg.cond(A) >= 1/sys.float_info.epsilon:
+                    # the matrix is singular, add a small epsilon
+                    eps = 1e-9
+                    epsI = eps * np.identity(2*self.ns)
+                    s = inv(A+epsI) @ d
+                    tmp = (np.identity(2*self.ns) \
+                        - expm(sympmat(self.ns) @ (A+epsI) * t).T) @ s / eps
+                else:
                     s = inv(A) @ d
                     tmp = s - self.S.T @ s
-                    self.d = np.zeros([2*self.ns])
-                    self.d[self.ns:] = tmp[:self.ns]
-                    self.d[:self.ns] = tmp[self.ns:]
-                else:
-                    self.disp = False
+
+                self.d = np.zeros([2*self.ns])
+                self.d[self.ns:] = tmp[:self.ns]
+                self.d[:self.ns] = tmp[self.ns:]
 
     def decompose(self, reg):
         cmds = []
@@ -259,6 +216,34 @@ class GaussianPropagation(Decomposition):
 
 class BoseHubbardPropagation(Decomposition):
     r"""Propagate the specified qumodes by a Bose-Hubbard Hamiltonians.
+
+    The Bose-Hubbard Hamiltonian has the form
+
+    .. math::
+        H = -J\sum_{i=1}^N\sum_{j=1}^N A_{ij} \ad_i\a_j
+            + \frac{1}{2}U\sum_{i=1}^N \a_i^\dagger \a_i (\ad_i \a_i - 1)
+            - \mu \sum_{i=1}^N \ad_i \a_i
+            + V \sum_{i=1}^N\sum_{j=1}^N A_{ij} \ad_i \a_i \ad_j \a_j.
+
+    where:
+
+    * :math:`A` is a real symmetric matrix of ones and zeros defining the adjacency of
+      each pairwise combination of nodes :math:`(i,j)` in the :math:`N`-node system,
+    * :math:`J` represents the transfer integral or hopping term of the boson between nodes,
+    * :math:`U` is the on-site interaction potential,
+    * :math:`\mu` is the chemical potential,
+    * :math:`V` is the dipole-dipole or nearest neighbour interaction term.
+
+    BoseHubbard Hamiltonians can be generated using the BosonOperator manually, or
+    on a (periodic/non-peridic) two-dimensional lattice via the function
+    ``openfermion.hamiltonians.bose_hubbard``
+    (see the `OpenFermion documentation <http://openfermion.readthedocs.io/en/latest/openfermion.html#openfermion.hamiltonians.bose_hubbard>`_).
+
+    In Strawberry Fields, the Bose-Hubbard propagation is performed by applying the
+    Lie-product formula, and decomposing the unitary operations into a combination
+    of beamsplitters, Kerr gates, and phase-space rotations.
+
+    .. note:: Nearest-neighbour interactions (:math:`V\neq 0`) are not currently supported.
 
     Args:
         operator (BosonOperator, QuadOperator): a bosonic Gaussian Hamiltonian
@@ -277,6 +262,7 @@ class BoseHubbardPropagation(Decomposition):
         super().__init__([t, operator])
 
         try:
+            # pylint: disable=protected-access
             self.hbar = _Engine._current_context.hbar
         except AttributeError:
             if hbar is None:
@@ -288,7 +274,7 @@ class BoseHubbardPropagation(Decomposition):
         if not is_hermitian(operator):
             raise ValueError("Hamiltonian must be Hermitian.")
 
-        if (not isinstance(k, int)) or k < 0:
+        if (not isinstance(k, int)) or k <= 0:
             raise ValueError("Argument k must be a postive integer.")
 
         if mode == 'local':
@@ -307,6 +293,7 @@ class BoseHubbardPropagation(Decomposition):
         if mode == 'local':
             self.ns = num_modes
         elif mode == 'global':
+            # pylint: disable=protected-access
             self.ns = _Engine._current_context.num_subsystems
 
     def decompose(self, reg):
@@ -323,7 +310,7 @@ class BoseHubbardPropagation(Decomposition):
 
         cmds = []
 
-        for i in range(self.num_layers):
+        for i in range(self.num_layers): #pylint: disable=unused-variable
             for q0, q1 in self.layer['BS'][2]:
                 cmds.append(Command(BS, (reg[q0], reg[q1])))
 

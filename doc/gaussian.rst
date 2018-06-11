@@ -112,10 +112,18 @@ Finally, we can rewrite this as a symplectic transformation, by making the subst
 
 	For a quadratic Hamiltonian of the form :math:`\hat{H} = \frac{1}{2}\r A\r + \r^T \mathbf{d}`, the symplectic transformation :math:`S\in\mathbb{R}^{2N\times 2N}` characterizing the time-evolution unitary operator :math:`\hat{U}(t) = e^{-i\hat{H}t/\hbar}` is given by
 
-	.. math:: S = \hat{D}(\mathbf{s} -{e^{\Omega A t}}^T \mathbf{s}) e^{\Omega A t}
+	.. math:: S = \hat{D}(\mathbf{s} -{e^{-\Omega A t}} \mathbf{s}) e^{\Omega A t}
 
 	where :math:`\Omega` is the symplectic matrix, :math:`\hat{D}` the displacement operation, and :math:`\mathbf{s} = -A^{-1}\mathbf{d}/\sqrt{2\hbar}`.
 
 .. tip::
 
    *Implemented in SF-OpenFermion as a quantum operation by* :class:`SFopenfermion.ops.GaussianPropagation`
+
+
+.. warning::
+
+	In the case where the quadratic coefficient matrix :math:`A` is **singular**, for example the Hamltonian :math:`\hat{H}=\frac{1}{2}p_0^2+q_0`, in order to calculate :math:`A^{-1}` to determine the resulting displacement, the matrix :math:`A` is perturbed by :math:`\epsilon\ll 1`:
+
+	.. math::
+		\mathbf{s} = -\frac{(A+\epsilon)^{-1}\mathbf{d}}{\sqrt{2\hbar}}, ~~~S = \hat{D}(\mathbf{s} -{e^{-\Omega (A+\epsilon) t}} \mathbf{s}) e^{\Omega A t}

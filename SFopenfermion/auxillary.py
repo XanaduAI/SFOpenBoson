@@ -12,14 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 r"""
-Bose-Hubbard Trotterization
-===========================
+Auxillary functions
+===================
 
-This module contains auxiliary functions for trotterizing
-the Bose-Hubbard Hamiltonian.
+This module contains auxiliary functions for extracting the parameters of
+quadratic and Bose-Hubbard Hamiltonians.
 
-Summary
--------
+Quadratic Hamiltonian functions
+-------------------------------
+
+.. autosummary::
+    quadratic_coefficients
+
+Bose Hubbard functions
+----------------------
 
 .. autosummary::
     BoseHubbardError
@@ -34,6 +40,66 @@ Code details
 from itertools import groupby
 
 import numpy as np
+
+from openfermion.utils import is_hermitian
+
+
+def quadratic_coefficients(operator):
+    r"""Return the quadratic coefficient matrix representing a Gaussian Hamiltonian.
+
+    A Gaussian Hamiltonian is any combination of quadratic operators
+    that can be written in quadratic form:
+
+    .. math:: H = \frac{1}{2}\mathbf{r}A\mathbf{r} + \mathbf{r}^T \mathbf{d}
+
+    where :math:`A\in\mathbb{R}^{2N\times 2N}` is a symmetric matrix,
+    :math:`\mathbf{d}\in\mathbb{R}^{2N}` is a real vector, and
+    :math:`\mathbf{r} = (\x_1,\dots,\x_N,\p_1,\dots,\p_N)` is the vector
+    of means in :math:`xp`-ordering.
+
+    This function accepts a bosonic Gaussian Hamiltonian, and returns the
+    matrix :math:`A` and vector :math:`\mathbf{d}` representing the
+    quadratic and linear coefficients.
+
+    Args:
+        operator (QuadOperator): a bosonic Gaussian Hamiltonian
+    Returns:
+        tuple(A, d): a tuple contains a 2Nx2N real symmetric numpy array,
+            and a length 2N real numpy array, where N is the number of modes
+            the operator acts on.
+    """
+    if not operator.is_gaussian():
+        raise ValueError("Hamiltonian must be Gaussian "
+                         "(quadratic in the quadrature operators).")
+
+    if not is_hermitian(operator):
+        raise ValueError("Hamiltonian must be Hermitian.")
+
+    num_modes = max([op[0] for term in operator.terms for op in term])+1
+    A = np.zeros([2*num_modes, 2*num_modes])
+    d = np.zeros([2*num_modes])
+    for term, coeff in operator.terms.items():
+        c = coeff.real
+        if len(term) == 2:
+            if term[0][1] == term[1][1]:
+                if term[0][1] == 'q':
+                    A[term[0][0], term[1][0]] = c
+                elif term[0][1] == 'p':
+                    A[num_modes+term[0][0], num_modes+term[1][0]] = c
+            else:
+                if term[0][1] == 'q':
+                    A[term[0][0], num_modes+term[1][0]] = c
+                elif term[0][1] == 'p':
+                    A[num_modes+term[0][0], term[1][0]] = c
+        elif len(term) == 1:
+            if term[0][1] == 'q':
+                d[num_modes+term[0][0]] = -c
+            elif term[0][1] == 'p':
+                d[term[0][0]] = c
+
+    A += A.T
+    return A, d
+
 
 class BoseHubbardError(Exception):
     """Custom error function for invalid Bose-Hubbard Hamiltonians."""

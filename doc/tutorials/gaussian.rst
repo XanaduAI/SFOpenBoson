@@ -56,7 +56,7 @@ To simulate the time-propagation of the forced oscillator in StrawberryFields, w
 >>> from strawberryfields.ops import *
 >>> from Sfopenfermion.ops import GaussianPropagation
 
-:class:`GaussianPropagation` accepts the following arguments:
+:class:`~.GaussianPropagation` accepts the following arguments:
 
 * ``operator``: a bosonic Gaussian Hamiltonian, either in the form of a ``BosonOperator`` or ``QuadOperator``.
 

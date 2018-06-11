@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Hamiltonians
-============
+CV Hamiltonians
+===============
 
 Here, we provided several auxillary Hamiltonians for CV systems.
 
@@ -40,10 +40,6 @@ propagation.
     controlled_phase
     cubic_phase
     kerr
-
-Bose-Hubbard Hamiltonians
--------------------------
-todo
 
 Code details
 ------------

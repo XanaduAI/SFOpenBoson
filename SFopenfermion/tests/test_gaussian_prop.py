@@ -11,31 +11,70 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+"""Tests for GaussianPropagation operation"""
+# pylint: disable=expression-not-assigned
 import unittest
 
 import numpy as np
-from scipy.linalg import expm
-
-from openfermion.ops import *
-from openfermion.utils import is_hermitian
-from openfermion.transforms import *
+from openfermion.ops import QuadOperator
 
 import strawberryfields as sf
-from strawberryfields.ops import *
-from strawberryfields.utils import squeezed_state
+from strawberryfields.ops import (BSgate,
+                                  CXgate,
+                                  CZgate,
+                                  Rgate,
+                                  Sgate,
+                                  S2gate,
+                                  Xgate,
+                                  Zgate)
+
 from strawberryfields.backends.shared_ops import rotation_matrix as rot
 
-from SFopenfermion.hamiltonians import *
-from SFopenfermion.ops import *
+from SFopenfermion.hamiltonians import (displacement,
+                                        rotation,
+                                        squeezing,
+                                        quadratic_phase,
+                                        beamsplitter,
+                                        two_mode_squeezing,
+                                        controlled_addition,
+                                        controlled_phase)
+
+from SFopenfermion.ops import GaussianPropagation
+
+
+class TestSingularCoefficients(unittest.TestCase):
+    """Tests using singular Hamiltonians"""
+    def setUp(self):
+        """parameters"""
+        self.hbar = 2
+        self.eng, _ = sf.Engine(1, hbar=self.hbar)
+        self.t = 0.432
+
+    def test_singular_coefficients(self):
+        """Test that H=p^2/2+q has displacement (q,t)=(-t^2,-t)"""
+        self.eng.reset()
+        q = self.eng.register
+
+        H = QuadOperator('p0 p0', 0.5) + QuadOperator('q0')
+
+        with self.eng:
+            GaussianPropagation(H, self.t) | q[0]
+
+        state = self.eng.run('gaussian')
+        res = state.means()
+        expected = [-self.t**2/2, -self.t]
+        self.assertTrue(np.allclose(res, expected))
 
 
 class TestSingleModeGaussianGates(unittest.TestCase):
+    """Tests using single mode Gaussian gates"""
     def setUp(self):
+        """parameters"""
         self.hbar = 2
         self.eng, _ = sf.Engine(1, hbar=self.hbar)
 
     def test_squeezing(self):
+        """Test squeezing gives correct means and cov"""
         self.eng.reset()
         q = self.eng.register
 
@@ -64,6 +103,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         self.assertTrue(np.allclose(res, exp))
 
     def test_rotation(self):
+        """Test rotation gives correct means and cov"""
         self.eng.reset()
         q = self.eng.register
 
@@ -92,6 +132,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         self.assertTrue(np.allclose(res, exp))
 
     def test_quadratic_phase(self):
+        """Test quadratic phase gives correct means and cov"""
         self.eng.reset()
         q = self.eng.register
 
@@ -118,6 +159,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
         self.assertTrue(np.allclose(res, expected))
 
     def test_displacement(self):
+        """Test displacement gives correct means and cov"""
         self.eng.reset()
         q = self.eng.register
 
@@ -141,6 +183,8 @@ class TestSingleModeGaussianGates(unittest.TestCase):
 
 
 def init_layer(q):
+    """Create an initial state with defined
+    squeezing and displacement"""
     Xgate(0.2) | q[0]
     Xgate(0.4) | q[1]
     Zgate(0.3) | q[1]
@@ -150,7 +194,9 @@ def init_layer(q):
 
 
 class TestTwoModeGaussianGatesLocal(unittest.TestCase):
+    """Tests for two mode Gaussian gates in local mode"""
     def setUp(self):
+        """parameters"""
         self.hbar = 2.
         self.eng, _ = sf.Engine(2, hbar=self.hbar)
 
@@ -159,6 +205,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.phi = 0.123
 
     def H_circuit(self, H, t):
+        """Test circuit for Gaussian Hamiltonian"""
         self.eng.reset()
         q = self.eng.register
         with self.eng:
@@ -169,9 +216,11 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         return state.means(), state.cov()
 
     def ref_circuit(self, gate):
+        """Reference circuit for Gaussian gate"""
         self.eng.reset()
         q = self.eng.register
         with self.eng:
+            # pylint: disable=pointless-statement
             q = init_layer(q)
             gate | q
 
@@ -179,8 +228,8 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         return state.means(), state.cov()
 
     def test_beamsplitter(self):
+        """Test beamsplitter produces correct cov and means"""
         self.eng.reset()
-        q = self.eng.register
 
         H, t = beamsplitter(self.th, self.phi, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
@@ -194,8 +243,8 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
     def test_two_mode_squeezing(self):
+        """Test S2gate produces correct cov and means"""
         self.eng.reset()
-        q = self.eng.register
 
         H, t = two_mode_squeezing(self.r, self.phi, hbar=self.hbar)
         resD, resV = self.H_circuit(H, t)
@@ -209,8 +258,8 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
     def test_controlled_addition(self):
+        """Test CXgate produces correct cov and means"""
         self.eng.reset()
-        q = self.eng.register
 
         H, t = controlled_addition(self.r)
         resD, resV = self.H_circuit(H, t)
@@ -224,8 +273,8 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
     def test_controlled_phase(self):
+        """Test CZgate produces correct cov and means"""
         self.eng.reset()
-        q = self.eng.register
 
         H, t = controlled_phase(self.r)
         resD, resV = self.H_circuit(H, t)
@@ -240,7 +289,9 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
 
 
 class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
+    """Tests for two mode Gaussian gates in global mode"""
     def setUp(self):
+        """parameters"""
         self.hbar = 2.
         self.eng, _ = sf.Engine(3, hbar=self.hbar)
         self.r = 0.2
@@ -248,9 +299,11 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.phi = 0.123
 
     def H_circuit(self, H, t):
+        """Test circuit for Gaussian Hamiltonian"""
         self.eng.reset()
         q = self.eng.register
         with self.eng:
+            # pylint: disable=pointless-statement
             q = init_layer(q)
             Xgate(0.1) | q[2]
             Sgate(0.1) | q[2]
@@ -260,9 +313,11 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         return state.means(), state.cov()
 
     def ref_circuit(self, gate, qm):
+        """Reference circuit for Gaussian gate"""
         self.eng.reset()
         q = self.eng.register
         with self.eng:
+            # pylint: disable=pointless-statement
             q = init_layer(q)
             Xgate(0.1) | q[2]
             Sgate(0.1) | q[2]
@@ -272,6 +327,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         return state.means(), state.cov()
 
     def test_single_mode_gate(self):
+        """Test Rgate gives correct means and cov in global mode"""
         self.eng.reset()
         q = self.eng.register
 
@@ -287,6 +343,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
     def test_two_mode_gate(self):
+        """Test S2gate gives correct means and cov in global mode"""
         self.eng.reset()
         q = self.eng.register
 
@@ -303,7 +360,9 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
 
 
 class TestQuadraticAndLinear(unittest.TestCase):
+    """Tests for Hamiltonians with quadratic and linear coefficients"""
     def setUp(self):
+        """parameters"""
         self.hbar = 2.
         self.eng, _ = sf.Engine(1, hbar=self.hbar)
         self.x0 = 1
@@ -313,6 +372,7 @@ class TestQuadraticAndLinear(unittest.TestCase):
         self.dt = 0.02
 
     def displaced_oscillator_soln(self, t):
+        """The solution to the forced quantum oscillator"""
         st = np.sin(t)
         ct = np.cos(t)
         x = self.p0*st + (self.x0-self.F)*ct + self.F
@@ -320,6 +380,8 @@ class TestQuadraticAndLinear(unittest.TestCase):
         return np.array([x, p])
 
     def test_displaced_oscillator(self):
+        """Test that a forced quantum oscillator produces the correct
+        trajectory in the phase space"""
         H = QuadOperator('q0 q0', 0.5)
         H += QuadOperator('p0 p0', 0.5)
         H -= QuadOperator('q0', self.F)
@@ -327,7 +389,7 @@ class TestQuadraticAndLinear(unittest.TestCase):
         res = []
         tlist = np.arange(0, self.t, self.dt)
 
-        for t in tlist:
+        for t in tlist: #pylint: disable=unused-variable
             self.eng.reset()
             q = self.eng.register
             with self.eng:
@@ -344,15 +406,19 @@ class TestQuadraticAndLinear(unittest.TestCase):
 
 
 class TestToolchain(unittest.TestCase):
+    """Tests for the GaussianPropagation toolchain"""
     def setUp(self):
+        """parameters"""
         self.hbar = 2.
         self.eng, _ = sf.Engine(2, hbar=self.hbar)
         self.phi = 0.123
 
     def ref_circuit(self, gate):
+        """Reference circuit for a unitary gate"""
         self.eng.reset()
         q = self.eng.register
         with self.eng:
+            # pylint: disable=pointless-statement
             q = init_layer(q)
             gate | q[0]
 
@@ -360,6 +426,7 @@ class TestToolchain(unittest.TestCase):
         return state.means(), state.cov()
 
     def test_outside_context(self):
+        """test setting hbar outside of engine context"""
         H, t = rotation(self.phi)
         Ugate = GaussianPropagation(H, t, hbar=self.hbar)
         resD, resV = self.ref_circuit(Ugate)
@@ -371,14 +438,16 @@ class TestToolchain(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
     def test_outside_context_no_hbar(self):
+        """test exception if no hbar outside of engine context"""
         with self.assertRaises(ValueError):
             H, t = rotation(self.phi)
-            Ugate = GaussianPropagation(H, t)
+            GaussianPropagation(H, t)
 
     def test_non_hermitian(self):
+        """test exception if H is not hermitian"""
         with self.assertRaises(ValueError):
             H = QuadOperator('q0', 1+2j)
-            Ugate = GaussianPropagation(H, hbar=2.)
+            GaussianPropagation(H, hbar=2.)
 
 
 if __name__ == '__main__':

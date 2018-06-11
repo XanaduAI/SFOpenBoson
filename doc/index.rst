@@ -78,7 +78,7 @@ SF-OpenFermion is **free** and **open source**, released under the Apache Licens
 
    code/ops
    code/hamiltonians
-   code/_bose_hubbard_trotter
+   code/auxillary
 
 Indices and tables
 ==================
