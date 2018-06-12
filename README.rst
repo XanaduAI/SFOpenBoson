@@ -1,13 +1,14 @@
 SFOpenBoson
 ==============
 
+This Strawberry Fields plugin library allows Strawberry Fields to interface with OpenFermion.
+
 `Strawberry Fields <http://github.com/XanaduAI/strawberryfields>`_ is a full-stack Python library for
 designing, simulating, and optimizing continuous variable (CV) quantum optical circuits.
 
 `OpenFermion <http://openfermion.org>`_ is an open source package for compiling and analyzing
 quantum algorithms that simulate fermionic systems.
 
-This Strawberry Fields plugin library allows Strawberry Fields to interface with OpenFermion.
 
 Dependencies
 -------------
@@ -20,13 +21,13 @@ SFOpenBoson depends on the following Python packages:
 * `Strawberry Fields <http://strawberryfields.readthedocs.io/>`_ >=0.7.2
 * `OpenFermion <https://github.com/quantumlib/OpenFermion>`_ >=0.6
 
-These can be installed using pip, or, if on linux, using your package manager (i.e. ``apt`` if on a Debian-based system.)
+These can be installed using pip, or, if on linux, using your package manager (i.e., ``apt`` if on a Debian-based system.)
 
 
 Installation
 ------------
 
-Installation of Strawberry Fields, as well as all required Python packages mentioned above, can be done using pip:
+Installation of SFOpenBoson, as well as all required Python packages mentioned above, can be done using pip:
 ::
 
     $ python -m pip install sfopenboson

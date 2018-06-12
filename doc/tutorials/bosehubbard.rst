@@ -5,12 +5,12 @@ Bose-Hubbard time propagation
 
 .. sectionauthor:: Josh Izaac <josh@xanadu.ai>
 
-In this tutorial, I will walk through an example of Hamiltonian simulation of a Bose-Hubbard model, using Strawberry Fields and OpenFermion.
+In this tutorial, we will walk through an example of Hamiltonian simulation of a Bose-Hubbard model, using Strawberry Fields and OpenFermion.
 
 On a lattice
 ------------
 
-OpenFermion provides a convenient Hamiltonian function to automatically generate Bose-Hubbard Hamiltonians on a two-dimension lattice. For example, to generate a Bose-Hubbard Hamiltonian on a size :math:`1\times 2` lattice, with on-site and nearest neighbor interactions,
+OpenFermion provides a convenient Hamiltonian function to automatically generate Bose-Hubbard Hamiltonians on a two-dimension lattice. For example, to generate a Bose-Hubbard Hamiltonian on a size :math:`1\times 2` lattice, with on-site and nearest neighbor interactions, we do
 
 >>> from openfermion.hamiltonians import bose_hubbard
 >>> bose_hubbard(x_dimension=1, y_dimension=2, tunneling=1, interaction=2,
@@ -23,7 +23,7 @@ OpenFermion provides a convenient Hamiltonian function to automatically generate
 1.0 [1^ 1 1^ 1] +
 -1.0 [1^ 1]
 
-For more information regarding this function, please see the `OpenFermion documentation <http://openfermion.readthedocs.io/en/latest/openfermion.html#openfermion.hamiltonians.bose_hubbard>`_).
+For more information regarding this function, please see the `OpenFermion documentation <http://openfermion.readthedocs.io/en/latest/openfermion.html#openfermion.hamiltonians.bose_hubbard>`_.
 
 Let's use this capability, along with the Hamiltonian propagation and decomposition tools of the SFOpenBoson plugin, to perform Bose-Hubbard simulations in Strawberry Fields. Consider the `Hamiltonian simulation <https://strawberryfields.readthedocs.io/en/latest/algorithms/hamiltonian_simulation.html>`_ algorithm in the Strawberry Fields documentation; to reproduce these results, we first generate a Bose-Hubbard Hamiltonian on a non-periodic :math:`1\times 2` lattice, with tunneling coefficient -1, and on-site interaction strength 1.5.
 
@@ -47,14 +47,14 @@ To simulate the time-propagation of the Hamiltonian in StrawberryFields, we also
 
 Alternatively, you can set ``mode='global'``, and the Hamiltonian is instead applied to the entire register by directly matching qumode numbers of the defined Hamiltonian; i.e., ``q0`` is applied to ``q[0]``, ``p1`` is applied to ``q[1]``, etc.
 
-Let's set up the two qumode quantum circuit - each mode corresponds to a node in the lattice - and propagating the Bose-Hubbard Hamiltonian ``H`` we defined in the previous section, starting from the initial state :math:`\ket{0,2}` in the Fock space, for time :math:`t=1.086` and Lie product truncation :math:`k=20`:
+Let's set up the two qumode quantum circuit — each mode corresponds to a node in the lattice — and propagating the Bose-Hubbard Hamiltonian ``H`` we defined in the previous section, starting from the initial state :math:`\ket{0,2}` in the Fock space, for time :math:`t=1.086` and Lie product truncation :math:`k=20`:
 
 >>> eng, q = sf.Engine(2)
 >>> with eng:
 ...     Fock(2) | q[1]
 ...     BoseHubbardPropagation(H, 1.086, 20) | q
 
-Now, we can run this simulation using the `Fock backend <https://strawberryfields.readthedocs.io/en/latest/code/backend.fock.html>`_, and output the Fock state probabilities at time :math:`t=1.086`:
+Now, we can run this simulation using the `Fock backend of Strawberry Fields <https://strawberryfields.readthedocs.io/en/latest/code/backend.fock.html>`_, and output the Fock state probabilities at time :math:`t=1.086`:
 
 .. note:: In the Bose-Hubbard model, the number of particles in the system remains constant, so we do not need to increase the cutoff dimension of the simulation beyond the total number of photons in the initial state.
 
@@ -68,7 +68,7 @@ Now, we can run this simulation using the `Fock backend <https://strawberryfield
 
 We can see that this matches the results obtained in the Strawberry Fields documentation.
 
-Note that, as before, we can output the decomposition as applied by the Strawberry Fields engine using ``eng.print_applied()``.
+Note that, as in the forced quantum harmonic oscillator tutorial, we can output the decomposition as applied by the Strawberry Fields engine using ``eng.print_applied()``.
 
 
 On an arbitrary network

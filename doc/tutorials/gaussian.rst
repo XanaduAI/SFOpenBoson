@@ -5,7 +5,7 @@ Forced quantum harmonic oscillator
 
 .. sectionauthor:: Josh Izaac <josh@xanadu.ai>
 
-Acting a Gaussian Hamiltonian defined in OpenFermion, on a continuous-variable (CV) quantum photonics simulation in Strawberry Fields, is simple with the SFOpenBoson. In this tutorial, I will walk through a simple example using the forced quantum harmonic oscillator.
+Simulating the time-propagation of a Gaussian Hamiltonian using a continuous-variable (CV) quantum circuit is simple with SFOpenBoson. In this tutorial, we will walk through a simple example using the forced quantum harmonic oscillator.
 
 Background
 ----------
@@ -66,7 +66,7 @@ To simulate the time-propagation of the forced oscillator in StrawberryFields, w
 
 Alternatively, you can set ``mode='global'``, and the Hamiltonian is instead applied to the entire register by directly matching qumode numbers of the defined Hamiltonian; i.e., ``q0`` is applied to ``q[0]``, ``p1`` is applied to ``q[1]``, etc.
 
-Let's set up the one qumode quantum circuit, propagating the forced oscillator Hamiltonian ``H`` we defined in the previous section, starting from the initial location :math:`(1,0.5)` in the phase space, for time :math:`t=1.43`:
+Let's set up the one qumode quantum circuit, propagating the forced oscillator Hamiltonian ``H`` we defined in the previous section, starting from the initial location :math:`(1,0.5)` in phase space, for time :math:`t=1.43`:
 
 >>> eng, q = sf.Engine(1)
 >>> with eng:
@@ -74,13 +74,13 @@ Let's set up the one qumode quantum circuit, propagating the forced oscillator H
 ...     Zgate(0.5) | q[0]
 ...     GaussianPropagation(H, 1.43) | q
 
-Now, we can run this simulation using the `Gaussian backend <https://strawberryfields.readthedocs.io/en/latest/code/backend.gaussian.html>`_, and output the location of the oscillator in the phase space at time :math:`t=1.43`:
+Now, we can run this simulation using the `Gaussian backend of Strawberry Fields <https://strawberryfields.readthedocs.io/en/latest/code/backend.gaussian.html>`_, and output the location of the oscillator in phase space at time :math:`t=1.43`:
 
 >>> state = eng.run('gaussian')
 >>> state.means()
 array([ 2.35472067,  1.06027036])
 
-Comparing this to the analytic solution,
+We compare this to the analytic solution,
 
 .. math::
 	&\braket{\q(1.43)} = (1-2)\cos(1.43) + 0.5\sin(1.43) + 2 = 2.35472,\\
@@ -98,10 +98,10 @@ Xgate(1.719), 	(reg[0])
 Zgate(1.98), 	(reg[0])
 
 
-Plotting the phase space time-evolution
+Plotting the phase-space time evolution
 ----------------------------------------
 
-By using Strawberry Fields to loop over various values of :math:`t`, we can plot the phase space location of the oscillator for various values of :math:`t`.
+By looping over various values of :math:`t`, we can plot the phase space location of the oscillator for various values of :math:`t`.
 
 Consider the following example:
 
@@ -122,7 +122,7 @@ Consider the following example:
 	    state = eng.run('gaussian')
 	    results[:, step] = state.means()
 
-Here, we are looping over the same circuit as above for values of :math:`t` within the domain :math:`0\leq t<6`, and storing the resulting expectation values :math:`(\braket{\q(t)}, \braket{\p(t)})` in the array ``results``. Plotting this array in the phase space:
+Here, we are looping over the same circuit as above for values of :math:`t` within the domain :math:`0\leq t<6`, and storing the resulting expectation values :math:`(\braket{\q(t)}, \braket{\p(t)})` in the array ``results``. We can plot this array in phase space:
 
 >>> from matplotlib import pyplot as plt
 >>> plt.plot(*results)

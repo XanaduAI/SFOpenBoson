@@ -4,20 +4,20 @@ SFOpenBoson
 :Release: |release|
 :Date: |today|
 
-`Strawberry Fields <http://github.com/XanaduAI/strawberryfields>`_ is a full-stack Python library for
-designing, simulating, and optimizing continuous variable (CV) quantum optical circuits.
+This Strawberry Fields plugin library allows Strawberry Fields to interface with OpenFermion.
+
+`Strawberry Fields <http://github.com/XanaduAI/strawberryfields>`_ is a full-stack Python library for designing, simulating, and optimizing continuous variable (CV) quantum optical circuits.
 
 `OpenFermion <http://openfermion.org>`_ is an open source package for compiling and analyzing
-quantum algorithms that simulate fermionic systems.
+quantum algorithms that simulate fermionic and bosonic systems.
 
-This Strawberry Fields plugin library allows Strawberry Fields to interface with OpenFermion.
 
 Features
 ========
 
-* Construct bosonic Hamiltonians in OpenFermion, and apply the resulting time propagation to your CV quantum circuit.
+* Construct bosonic Hamiltonians in OpenFermion, and apply the resulting time propagation using  a CV quantum circuit.
 
-* Calculates the time-evolution unitary exactly for Gaussian Hamiltonians - these can then be decomposed into the base CV gate set of Strawberry Fields using the Bloch-Messiah decomposition.
+* Calculates the time-evolution unitary exactly for Gaussian Hamiltonians – these can then be decomposed into the base CV gate set of Strawberry Fields using the Bloch-Messiah decomposition.
 
 * Particular non-Gaussian gate decompositions, using the Trotter formula, are also supported, including Bose-Hubbard Hamiltonians.
 
@@ -26,9 +26,9 @@ Features
 Getting started
 ===============
 
-To get the SFOpenBoson plugin installed and running on your system, begin at the :ref:`download and installation guide <installation>`. Then, familiarise yourself with some background information on the time-propagation of :ref:`Gaussian Hamiltonians <gaussian_hamiltonians>` and :ref:`the Bose-Hubbard model <bosehubbard>`.
+To get the SFOpenBoson plugin installed and running on your system, begin at the :ref:`download and installation guide <installation>`. Then, familiarize yourself with some background information on the time-propagation of :ref:`Gaussian Hamiltonians <gaussian_hamiltonians>` and :ref:`the Bose-Hubbard model <bosehubbard>`.
 
-For getting started with using the Hafnian library in your own code, have a look at the provided :ref:`tutorials <tutorial_gaussian>`.
+For getting started with using the SFOpenBoson plugin in your own code, have a look at the provided :ref:`Gaussian <tutorial_gaussian>` and :ref:`Bose-Hubbard <tutorial_BH>` tutorials.
 
 Finally, detailed documentation on the code and API is provided.
 

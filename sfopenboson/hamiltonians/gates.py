@@ -36,8 +36,8 @@ def displacement(alpha, mode=0, hbar=2):
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     if alpha == 0.:
         return BosonOperator(''), 0
@@ -64,8 +64,8 @@ def xdisplacement(x, mode=0):
         x (float): the position displacement in the phase space
         mode (int): the qumode on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return QuadOperator('p{}'.format(mode)), x
 
@@ -85,8 +85,8 @@ def zdisplacement(p, mode=0):
         p (float): the position displacement in the phase space
         mode (int): the qumode on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -QuadOperator('q{}'.format(mode)), p
 
@@ -108,8 +108,8 @@ def rotation(phi, mode=0, hbar=2):
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -BosonOperator('{}^ {}'.format(mode, mode))*hbar, phi
 
@@ -129,14 +129,14 @@ def squeezing(r, phi=0, mode=0, hbar=2):
         r (float): the squeezing magnitude
         phi (float): the quadrature angle in which the squeezing occurs.
             :math:`\phi=0` corresponds to squeezing in the :math:`\x` quadrature,
-            and :math:`\phi=np.pi/2` corresponds to squeezing in the
+            and :math:`\phi=\pi/2` corresponds to squeezing in the
             :math:`\p` quadrature.
         mode (int): the qumode on which the operation acts
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     H = BosonOperator('{} {}'.format(mode, mode), np.exp(-1j*phi))
     H -= BosonOperator('{}^ {}^'.format(mode, mode), np.exp(1j*phi))
@@ -158,8 +158,8 @@ def quadratic_phase(s=1, mode=0):
         s (float): the quadratic phase parameter
         mode (int): the qumode on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -QuadOperator('q{} q{}'.format(mode, mode))/2, s
 
@@ -185,8 +185,8 @@ def beamsplitter(theta=np.pi/4, phi=0, mode1=0, mode2=1, hbar=2):
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     H = BosonOperator('{}^ {}'.format(mode1, mode2), np.exp(1j*(np.pi-phi)))
     H += BosonOperator('{} {}^'.format(mode1, mode2), -np.exp(-1j*(np.pi-phi)))
@@ -215,8 +215,8 @@ def two_mode_squeezing(r, phi=0, mode1=0, mode2=1, hbar=2):
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     H = BosonOperator('{} {}'.format(mode1, mode2), np.exp(-1j*(np.pi+phi)))
     H -= BosonOperator('{}^ {}^'.format(mode1, mode2), np.exp(1j*(np.pi+phi)))
@@ -238,8 +238,8 @@ def controlled_addition(s=1, mode1=0, mode2=1):
         mode1 (int): the first qumode :math:`\a_0` on which the operation acts
         mode2 (int): the second qumode :math:`\a_1` on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return QuadOperator('q{} p{}'.format(mode1, mode2)), s
 
@@ -260,8 +260,8 @@ def controlled_phase(s=1, mode1=0, mode2=1):
         mode1 (int): the first qumode :math:`\a_0` on which the operation acts
         mode2 (int): the second qumode :math:`\a_1` on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -QuadOperator('q{} q{}'.format(mode1, mode2)), s
 
@@ -281,8 +281,8 @@ def cubic_phase(gamma=1, mode=0):
         gamma (float): the cubic phase parameter
         mode (int): the qumode on which the operation acts
     Returns:
-        tuple(QuadOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (QuadOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -QuadOperator('q{} q{} q{}'.format(mode, mode, mode))/3, gamma
 
@@ -304,7 +304,7 @@ def kerr(kappa=1, mode=0, hbar=2):
         hbar (float): the scaling convention chosen in the definition of the quadrature
             operators: :math:`[\x,\p]=i\hbar`
     Returns:
-        tuple(BosonOperator, t): tuple containing the Hamiltonian
-            representing the operation and the propagation time
+        tuple (BosonOperator, t): tuple containing the Hamiltonian
+        representing the operation and the propagation time
     """
     return -BosonOperator('{}^ {} {}^ {}'.format(mode, mode, mode, mode))*hbar, kappa

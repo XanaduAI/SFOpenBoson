@@ -42,7 +42,7 @@ indicating the mode the operator acts on.
 
 If 'global' is not provided, it is assumed that the Hamiltonian
 should only be applied locally, to the qumodes specified on the right.
-In this case, number of operator indices must match the number of
+In this case, the number of operator indices must match the number of
 qumodes the Hamiltonian is applied to.
 
 To see the gates applied, simply run ``eng.print_applied()``:
@@ -94,22 +94,21 @@ from .auxillary import trotter_layer, quadratic_coefficients
 
 
 class GaussianPropagation(Decomposition):
-    r"""Propagate the specified qumodes by a bosonic Gaussian Hamiltonians.
+    r"""Propagate the specified qumodes by a bosonic Gaussian Hamiltonian.
 
     A Gaussian Hamiltonian is any combination of quadratic operators
     that can be written in quadratic form:
 
-    .. math:: H = \frac{1}{2}\mathbf{r}A\mathbf{r} + \mathbf{r}^T \mathbf{d}
+    .. math:: H = \frac{1}{2}\mathbf{r}^T A\mathbf{r} + \mathbf{r}^T \mathbf{d}
 
     where:
 
     * :math:`A\in\mathbb{R}^{2N\times 2N}` is a symmetric matrix,
     * :math:`\mathbf{d}\in\mathbb{R}^{2N}` is a real vector, and
     * :math:`\mathbf{r} = (\x_1,\dots,\x_N,\p_1,\dots,\p_N)` is the vector
-      of means in :math:`xp`-ordering.
+      of quadrature operators in :math:`xp`-ordering.
 
-    This operation calculates the real symmetric matrix of quadratic coefficients
-    of the quadrature operators, and calculates the corresponding Gaussian symplectic
+    This operation calculates the corresponding Gaussian symplectic
     transformation via the following relation:
 
     .. math:: S = e^{\Omega A t}
@@ -122,7 +121,7 @@ class GaussianPropagation(Decomposition):
     is the symplectic matrix.
 
     Depending on whether the resulting symplectic transformation is passive
-    (photon-preserving) or active (non-photon preserving), the Clements or
+    (energy preserving) or active (non-energy preserving), the Clements or
     Bloch-Messiah decomposition in Strawberry Fields is then used to decompose
     the Hamiltonian into a set of CV gates.
 
@@ -130,9 +129,9 @@ class GaussianPropagation(Decomposition):
         operator (BosonOperator, QuadOperator): a bosonic Gaussian Hamiltonian
         t (float): the time propagation value. If not provided, default value is 1.
         mode (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only
-            the applied qumodes (q[i], q[j],...). I.e., a_0 applies to q[i], a_1 applies to q[j].
-            If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register;
-            i.e., a_0 applied to q[0], applies to q[1], etc.
+            the applied qumodes (q[i], q[j],...). For instance, a_0 applies to q[i], a_1 applies to q[j].
+            If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register,
+            i.e., a_0 applies to q[0], applies to q[1], etc.
         hbar (float): the value of :math:`\hbar` used in the definition of the :math:`\x`
             and :math:`\p` quadrature operators. Note that if used inside of an engine
             context, the hbar value of the engine will override this keyword argument.
@@ -215,7 +214,7 @@ class GaussianPropagation(Decomposition):
 
 
 class BoseHubbardPropagation(Decomposition):
-    r"""Propagate the specified qumodes by a Bose-Hubbard Hamiltonians.
+    r"""Propagate the specified qumodes by a Bose-Hubbard Hamiltonian.
 
     The Bose-Hubbard Hamiltonian has the form
 
@@ -250,9 +249,9 @@ class BoseHubbardPropagation(Decomposition):
         t (float): the time propagation value. If not provided, default value is 1.
         k (int): the number of products in the truncated Lie product formula.
         mode (str): By default, ``mode='local'`` and the Hamiltonian is assumed to apply to only
-            the applied qumodes (q[i], q[j],...). I.e., a_0 applies to q[i], a_1 applies to q[j].
-            If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register;
-            i.e., a_0 applied to q[0], applies to q[1], etc.
+            the applied qumodes (q[i], q[j],...). For instance, a_0 applies to q[i], a_1 applies to q[j].
+            If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register,
+            i.e., a_0 applies to q[0], applies to q[1], etc.
         hbar (float): the value of :math:`\hbar` used in the definition of the :math:`\x`
             and :math:`\p` quadrature operators. Note that if used inside of an engine
             context, the hbar value of the engine will override this keyword argument.

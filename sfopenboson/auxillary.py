@@ -50,12 +50,12 @@ def quadratic_coefficients(operator):
     A Gaussian Hamiltonian is any combination of quadratic operators
     that can be written in quadratic form:
 
-    .. math:: H = \frac{1}{2}\mathbf{r}A\mathbf{r} + \mathbf{r}^T \mathbf{d}
+    .. math:: H = \frac{1}{2}\mathbf{r}^T A\mathbf{r} + \mathbf{r}^T \mathbf{d}
 
     where :math:`A\in\mathbb{R}^{2N\times 2N}` is a symmetric matrix,
     :math:`\mathbf{d}\in\mathbb{R}^{2N}` is a real vector, and
     :math:`\mathbf{r} = (\x_1,\dots,\x_N,\p_1,\dots,\p_N)` is the vector
-    of means in :math:`xp`-ordering.
+    of quadrature operators in :math:`xp`-ordering.
 
     This function accepts a bosonic Gaussian Hamiltonian, and returns the
     matrix :math:`A` and vector :math:`\mathbf{d}` representing the
@@ -64,9 +64,9 @@ def quadratic_coefficients(operator):
     Args:
         operator (QuadOperator): a bosonic Gaussian Hamiltonian
     Returns:
-        tuple(A, d): a tuple contains a 2Nx2N real symmetric numpy array,
-            and a length 2N real numpy array, where N is the number of modes
-            the operator acts on.
+        tuple (A, d): a tuple contains a 2Nx2N real symmetric numpy array,
+        and a length-2N real numpy array, where N is the number of modes
+        the operator acts on.
     """
     if not operator.is_gaussian():
         raise ValueError("Hamiltonian must be Gaussian "
@@ -101,9 +101,16 @@ def quadratic_coefficients(operator):
     return A, d
 
 
-class BoseHubbardError(Exception):
+class BoseHubbardError(ValueError):
     """Custom error function for invalid Bose-Hubbard Hamiltonians."""
-    pass
+
+    def with_traceback(self, tb):
+        """This method sets argument ``tb`` as the new traceback for the exception
+        and returns the exception object. See the
+        `Python documentation <https://docs.python.org/3/library/exceptions.html#BaseException.with_traceback>`_
+        for more details.
+        """
+        return super().with_traceback(tb)
 
 
 def extract_tunneling(H):
