@@ -110,6 +110,10 @@ class BoseHubbardError(ValueError):
         `Python documentation <https://docs.python.org/3/library/exceptions.html#BaseException.with_traceback>`_
         for more details.
         """
+        # this method is overwritten simply due to a bug in Sphinx,
+        # which automatically pulls this method into the documentation
+        # even if it is not present. By overwriting, we at least get
+        # to modify the docstring presented.
         return super().with_traceback(tb)
 
 

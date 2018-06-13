@@ -60,7 +60,7 @@ Once the matrix of quadratic coefficients :math:`A` and vector of linear coeffic
 
 .. math:: \hat{H} = \frac{1}{2}(\r-\mathbf{d}')^T A(\r-\mathbf{d}')
 
-where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}` (this quantity can always be calculated, since :math:`A` is symmetric positive definite). Let's consider the case of zero linear coefficients and non-zero linear coefficients separately.
+where :math:`\mathbf{d}'=-A^{-1}\mathbf{d}`. Let's consider the case of zero linear coefficients and non-zero linear coefficients separately.
 
 Zero linear coefficients
 ^^^^^^^^^^^^^^^^^^^^^^^^
