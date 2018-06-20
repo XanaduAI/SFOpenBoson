@@ -31,13 +31,13 @@ from strawberryfields.ops import (BSgate,
 from strawberryfields.backends.shared_ops import rotation_matrix as rot
 
 from sfopenboson.hamiltonians import (displacement,
-                                        rotation,
-                                        squeezing,
-                                        quadratic_phase,
-                                        beamsplitter,
-                                        two_mode_squeezing,
-                                        controlled_addition,
-                                        controlled_phase)
+                                      rotation,
+                                      squeezing,
+                                      quadratic_phase,
+                                      beamsplitter,
+                                      two_mode_squeezing,
+                                      controlled_addition,
+                                      controlled_phase)
 
 from sfopenboson.ops import GaussianPropagation
 

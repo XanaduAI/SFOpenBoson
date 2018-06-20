@@ -1,5 +1,26 @@
 SFOpenBoson
-==============
+###########
+
+.. image:: https://img.shields.io/travis/XanaduAI/SFOpenBoson/master.svg?style=for-the-badge
+    :alt: Travis
+    :target: https://travis-ci.org/XanaduAI/SFOpenBoson
+
+.. image:: https://img.shields.io/codecov/c/github/xanaduai/SFOpenBoson/master.svg?style=for-the-badge
+    :alt: Codecov coverage
+    :target: https://codecov.io/gh/XanaduAI/SFOpenBoson
+
+.. image:: https://img.shields.io/codacy/grade/4a3ad81b88d149e791a02ee3f924eb4f.svg?style=for-the-badge
+    :alt: Codacy grade
+    :target: https://app.codacy.com/app/XanaduAI/SFOpenBoson?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/SFOpenBoson&utm_campaign=badger
+
+.. image:: https://img.shields.io/readthedocs/SFOpenBoson.svg?style=for-the-badge
+    :alt: Read the Docs
+    :target: https://sfopenboson.readthedocs.io
+
+.. image:: https://img.shields.io/pypi/pyversions/SFOpenBoson.svg?style=for-the-badge
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/SFOpenBoson
+
 
 This Strawberry Fields plugin library allows Strawberry Fields to interface with OpenFermion.
 
@@ -10,18 +31,18 @@ designing, simulating, and optimizing continuous variable (CV) quantum optical c
 quantum algorithms that simulate fermionic systems.
 
 
-Dependencies
--------------
+Features
+========
 
-SFOpenBoson depends on the following Python packages:
+* Construct bosonic Hamiltonians in OpenFermion, and apply the resulting time propagation using  a CV quantum circuit.
 
-* `Python <http://python.org/>`_ >=3.5
-* `NumPy <http://numpy.org/>`_  >=1.13.3
-* `SciPy <http://scipy.org/>`_  >=1.0.0
-* `Strawberry Fields <http://strawberryfields.readthedocs.io/>`_ >=0.7.2
-* `OpenFermion <https://github.com/quantumlib/OpenFermion>`_ >=0.6
+* Calculates the time-evolution unitary exactly for Gaussian Hamiltonians – these can then be decomposed into the base CV gate set of Strawberry Fields using the Bloch-Messiah decomposition.
 
-These can be installed using pip, or, if on linux, using your package manager (i.e., ``apt`` if on a Debian-based system.)
+* Particular non-Gaussian gate decompositions, using the Trotter formula, are also supported, including Bose-Hubbard Hamiltonians.
+
+* The Hamiltonians submodule contains important OpenFermion-compatible CV Hamiltonians, including those corresponding to the gate set used in Strawberry Fields.
+
+To get started, please see the online `documentation <https://sfopenboson.readthedocs.io>`_
 
 
 Installation
@@ -31,36 +52,6 @@ Installation of SFOpenBoson, as well as all required Python packages mentioned a
 ::
 
     $ python -m pip install sfopenboson
-
-
-Software tests
---------------
-
-To ensure that the SFOpenBoson plugin is working correctly after installation, the test suite can be run by navigating to the source code folder and running: ::
-
-	$ make test
-
-
-Documentation
--------------
-
-The SFOpenBoson documentation is built automatically and hosted at `Read the Docs <https://sfopenboson.readthedocs.io>`_.
-
-To build the documentation locally, the following additional packages are required:
-
-* `Sphinx <http://sphinx-doc.org/>`_ >=1.5
-* `sphinxcontrib-bibtex <https://sphinxcontrib-bibtex.readthedocs.io/en/latest/>`_ >=0.3.6
-
-These can be installed via ``pip``: ::
-
-    $ python -m pip install sphinx sphinxcontrib-bibtex --user
-
-To build the HTML documentation, go to the top-level directory and run the command
-::
-
-  $ make doc
-
-The documentation can then be found in the ``docs/_build/html/`` directory.
 
 
 Code authors

@@ -22,22 +22,22 @@ from openfermion.transforms import get_quad_operator
 from openfermion.hamiltonians import bose_hubbard
 
 from sfopenboson.auxillary import (BoseHubbardError,
-                                     quadratic_coefficients,
-                                     extract_tunneling,
-                                     extract_onsite_chemical,
-                                     extract_dipole,
-                                     trotter_layer)
+                                   quadratic_coefficients,
+                                   extract_tunneling,
+                                   extract_onsite_chemical,
+                                   extract_dipole,
+                                   trotter_layer)
 
 from sfopenboson.hamiltonians import (displacement,
-                                        xdisplacement,
-                                        zdisplacement,
-                                        rotation,
-                                        squeezing,
-                                        quadratic_phase,
-                                        beamsplitter,
-                                        two_mode_squeezing,
-                                        controlled_addition,
-                                        controlled_phase)
+                                      xdisplacement,
+                                      zdisplacement,
+                                      rotation,
+                                      squeezing,
+                                      quadratic_phase,
+                                      beamsplitter,
+                                      two_mode_squeezing,
+                                      controlled_addition,
+                                      controlled_phase)
 
 
 class TestQuadraticCoefficients(unittest.TestCase):
