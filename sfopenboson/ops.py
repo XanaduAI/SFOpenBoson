@@ -205,6 +205,7 @@ class GaussianPropagation(Decomposition):
                 self.d[:self.ns] = tmp[self.ns:]
 
     def decompose(self, reg):
+        """Return the decomposed commands"""
         cmds = []
         cmds += [Command(GaussianTransform(self.S, hbar=self.hbar), reg, decomp=True)]
         if self.disp:
