@@ -13,7 +13,7 @@ SFOpenBoson
     :alt: Codacy grade
     :target: https://app.codacy.com/app/XanaduAI/SFOpenBoson?utm_source=github.com&utm_medium=referral&utm_content=XanaduAI/SFOpenBoson&utm_campaign=badger
 
-.. image:: https://img.shields.io/readthedocs/SFOpenBoson.svg?style=for-the-badge
+.. image:: https://img.shields.io/readthedocs/sfopenboson.svg?style=for-the-badge
     :alt: Read the Docs
     :target: https://sfopenboson.readthedocs.io
 
