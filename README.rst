@@ -46,7 +46,7 @@ To get started, please see the online `documentation <https://sfopenboson.readth
 
 
 Installation
-------------
+============
 
 Installation of SFOpenBoson, as well as all required Python packages mentioned above, can be done using pip:
 ::
@@ -55,7 +55,7 @@ Installation of SFOpenBoson, as well as all required Python packages mentioned a
 
 
 Code authors
-------------
+============
 
 Josh Izaac.
 
@@ -65,7 +65,7 @@ If you are doing research using Strawberry Fields, please cite `our whitepaper <
 
 
 Support
--------
+=======
 
 - **Source Code:** https://github.com/XanaduAI/SFOpenBoson
 - **Issue Tracker:** https://github.com/XanaduAI/SFOpenBoson/issues
@@ -77,6 +77,6 @@ come join the discussion and chat with our Strawberry Fields team.
 
 
 License
--------
+=======
 
 SFOpenBoson is **free** and **open source**, released under the Apache License, Version 2.0.

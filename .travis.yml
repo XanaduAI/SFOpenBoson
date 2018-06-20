@@ -1,7 +1,7 @@
 language: python
 cache: pip
 python:
-  - 3.5
+  - 3.6
 env:
 install:
   - pip install -r requirements.txt
