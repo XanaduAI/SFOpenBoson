@@ -27,7 +27,7 @@ requirements = [
     "numpy>=1.13",
     "scipy>=1.0.0",
     "strawberryfields>=0.7.3",
-    "openfermion>=0.6"
+    "openfermion>=0.7"
 ]
 
 info = {
