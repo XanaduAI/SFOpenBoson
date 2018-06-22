@@ -16,12 +16,10 @@
 import sys
 import os
 from setuptools import setup
-# from sphinx.setup_command import BuildDoc
 
 with open("sfopenboson/_version.py") as f:
 	version = f.readlines()[-1].split()[-1].strip("\"'")
 
-# cmdclass = {'build_docs': BuildDoc}
 
 requirements = [
     "numpy>=1.13",
@@ -42,13 +40,10 @@ info = {
                     'sfopenboson.hamiltonians',
                     'sfopenboson.tests'
                 ],
-    # 'package_data': {'sfopenboson': ['backends/data/*']},
-    # 'include_package_data': True,
     'description': 'Open source library for continuous-variable quantum computation',
     'long_description': open('README.rst').read(),
     'provides': ["sfopenboson"],
     'install_requires': requirements,
-    # 'extras_require': extra_requirements,
     'command_options': {
         'build_sphinx': {
             'version': ('setup.py', version),
