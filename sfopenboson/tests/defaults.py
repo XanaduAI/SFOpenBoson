@@ -31,6 +31,8 @@ logging.captureWarnings(True)
 
 
 class BaseTest(unittest.TestCase):
+    """The base unit test class used by SFOpenBoson"""
 
     def logTestName(self):
-        logging.info('{}'.format(self.id()))
+        """Log the test method name at the information level"""
+        logging.info('%s', self.id())
