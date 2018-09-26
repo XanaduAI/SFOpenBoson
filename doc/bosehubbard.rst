@@ -1,6 +1,6 @@
 .. role:: raw-latex(raw)
    :format: latex
-   
+
 .. role:: html(raw)
    :format: html
 
@@ -33,27 +33,30 @@ where:
 CV decomposition
 ----------------
 
-As the Bose-Hubbard Hamiltonian is time-independent, it suffices to find a continuous-variable (CV) gate decomposition for the unitary operator :math:`\hat{U}=e^{-i\hat{H}t}` :cite:`kalajdzievski2018`. Let's consider the case :math:`V=0` (i.e., no nearest-neighbour interactions). In this case, we can rewrite the Hamiltonian in the following form:
+As the Bose-Hubbard Hamiltonian is time-independent, it suffices to find a continuous-variable (CV) gate decomposition for the unitary operator :math:`\hat{U}=e^{-i\hat{H}t}` :cite:`kalajdzievski2018`. We can rewrite the Hamiltonian in the following form:
 
 
 .. math::
     \hat{H} = -J\sum_{i=1}^N\sum_{j=1}^N A_{ij} \ad_i\a_j
         + \sum_{\ell=1}^N \left(\frac{1}{2}U \hat{n}_\ell^2
-        - \left(\frac{1}{2}U+\mu\right) \hat{n}_\ell\right),
+        - \left(\frac{1}{2}U+\mu\right) \hat{n}_\ell\right)
+        + V \sum_{i=1}^N\sum_{j=1}^N \hat{n}_i\hat{n}_j,
 
 where :math:`\hat{n}_i=\ad_i\a_i` is the bosonic number operator. Taking the matrix exponential, and applying the Lie product formula,
 
 .. math::
-	e^{-iHt} = \lim_{k\rightarrow\infty}\left[\prod_{\substack{i,j\\i\sim j}}\exp\left({i\frac{ J t}{k}(\ad_i\a_j + \ad_j\a_i)}\right)\prod_{\ell}\exp\left(-i\frac{Ut}{2k}\hat{n}_\ell^2\right)\exp\left(i\frac{(U+2\mu)t}{2k}\hat{n}_\ell\right)\right]^k,
+	e^{-iHt} = \lim_{k\rightarrow\infty}\left[\prod_{\substack{i,j\\i\sim j}}\exp\left({i\frac{ J t}{k}(\ad_i\a_j + \ad_j\a_i)}\right)\exp\left({-i\frac{V t}{k}\hat{n}_i\hat{n}_j}\right)\prod_{\ell}\exp\left(-i\frac{Ut}{2k}\hat{n}_\ell^2\right)\exp\left(i\frac{(U+2\mu)t}{2k}\hat{n}_\ell\right)\right]^k,
 
 where :math:`i\sim j` indicates we are only summing over adjacent nodes (i.e., those where :math:`A_{ij}=1`). Truncating :math:`k` to a reasonable value, we end up with the approximation
 
 .. math::
-	e^{-iHt} = \left[\prod_{\substack{i,j\\i\sim j}}\exp\left({i\frac{ J t}{k}(\ad_i\a_j + \ad_j\a_i)}\right)\prod_{\ell}\exp\left(-i\frac{Ut}{2k}\hat{n}_\ell^2\right)\exp\left(i\frac{(U+2\mu)t}{2k}\hat{n}_\ell\right)\right]^k + \mathcal{O}(t^2/k).
+	e^{-iHt} = \left[\prod_{\substack{i,j\\i\sim j}}\exp\left({i\frac{ J t}{k}(\ad_i\a_j + \ad_j\a_i)}\right)\exp\left({-i\frac{V t}{k}\hat{n}_i\hat{n}_j}\right)\prod_{\ell}\exp\left(-i\frac{Ut}{2k}\hat{n}_\ell^2\right)\exp\left(i\frac{(U+2\mu)t}{2k}\hat{n}_\ell\right)\right]^k + \mathcal{O}(t^2/k).
 
-Comparing these individual bracketed operators with the known CV gate set (see `here <https://strawberryfields.readthedocs.io/en/latest/conventions/gates.html>`_ for more details) we see that they correspond to a beamsplitter, Kerr gate, and phase-space rotation respectively:
+Comparing these individual bracketed operators with the known CV gate set (see `here <https://strawberryfields.readthedocs.io/en/latest/conventions/gates.html>`_ for more details) we see that they correspond to a beamsplitter, cross-Kerr gate, Kerr gate, and phase-space rotation respectively:
 
 * :math:`\exp\left({i\frac{ J t}{k}(\ad_i\a_j + \ad_j\a_i)}\right)\equiv BS(\theta, \phi)` where :math:`\theta=Jt/k`, :math:`\phi=\pi/2`,
+
+* :math:`\exp\left({-i\frac{V t}{k}\hat{n}_i\hat{n}_j}\right)\equiv CK(\kappa)` where :math:`\kappa=-Vt/k`,
 
 * :math:`\exp\left(-i\frac{Ut}{2k}\hat{n}_\ell^2\right)\equiv K(\kappa)` where :math:`\kappa=-Ut/2k`,
 
@@ -64,10 +67,9 @@ Comparing these individual bracketed operators with the known CV gate set (see `
 .. admonition:: Decomposition
 	:class: defn
 
-	A Bose-Hubbard Hamiltonian with zero nearest-neighbour interactions can be implemented to arbitrary error via a decomposition of beamsplitters, Kerr gates, and phase-space rotations.
+	A Bose-Hubbard Hamiltonian can be implemented to arbitrary error via a decomposition of beamsplitters, cross-Kerr interactions, Kerr gates, and phase-space rotations.
 
 .. tip::
 
    *Implemented in SFOpenBoson as a quantum operation by* :class:`sfopenboson.ops.BoseHubbardPropagation`
-
 

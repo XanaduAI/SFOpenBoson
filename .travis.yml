@@ -1,8 +1,10 @@
 language: python
 cache: pip
 python:
+  - 3.5
   - 3.6
 env:
+  - LOGGING=info
 install:
   - pip install -r requirements.txt
   - pip install wheel codecov

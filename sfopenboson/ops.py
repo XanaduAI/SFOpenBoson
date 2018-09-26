@@ -81,6 +81,7 @@ from openfermion.transforms import get_quad_operator, get_boson_operator
 from openfermion.utils import is_hermitian, prune_unused_indices
 
 from strawberryfields.ops import (BSgate,
+                                  CKgate,
                                   Decomposition,
                                   GaussianTransform,
                                   Kgate,
@@ -138,7 +139,7 @@ class GaussianPropagation(Decomposition):
     """
     ns = None
     def __init__(self, operator, t=1, mode='local', hbar=None):
-        super().__init__([t, operator])
+        super().__init__([t])
 
         try:
             # pylint: disable=protected-access
@@ -243,8 +244,6 @@ class BoseHubbardPropagation(Decomposition):
     Lie-product formula, and decomposing the unitary operations into a combination
     of beamsplitters, Kerr gates, and phase-space rotations.
 
-    .. note:: Nearest-neighbour interactions (:math:`V\neq 0`) are not currently supported.
-
     Args:
         operator (BosonOperator, QuadOperator): a bosonic Gaussian Hamiltonian
         t (float): the time propagation value. If not provided, default value is 1.
@@ -259,7 +258,7 @@ class BoseHubbardPropagation(Decomposition):
     """
     ns = None
     def __init__(self, operator, t=1, k=20, mode='local', hbar=None):
-        super().__init__([t, operator])
+        super().__init__([t])
 
         try:
             # pylint: disable=protected-access
@@ -302,11 +301,23 @@ class BoseHubbardPropagation(Decomposition):
         phi = self.layer['BS'][1]
         BS = BSgate(theta, phi)
 
+        # make cross-Kerr gate
+        CK = None
+        param = self.layer.get('CK', [0])[0]
+        if param != 0:
+            CK = CKgate(param)
+
         # make Kerr gate
-        K = Kgate(self.layer['K'][0])
+        K = None
+        param = self.layer.get('K', [0])[0]
+        if param != 0:
+            K = Kgate(param)
 
         # make rotation gate
-        R = Rgate(self.layer['R'][0])
+        R = None
+        param = self.layer.get('R', [0])[0]
+        if param != 0:
+            R = Rgate(param)
 
         cmds = []
 
@@ -314,10 +325,16 @@ class BoseHubbardPropagation(Decomposition):
             for q0, q1 in self.layer['BS'][2]:
                 cmds.append(Command(BS, (reg[q0], reg[q1])))
 
-            for mode in self.layer['K'][1]:
-                cmds.append(Command(K, reg[mode]))
+            if CK is not None:
+                for q0, q1 in self.layer['CK'][1]:
+                    cmds.append(Command(CK, (reg[q0], reg[q1])))
 
-            for mode in self.layer['R'][1]:
-                cmds.append(Command(R, reg[mode]))
+            if K is not None:
+                for mode in self.layer['K'][1]:
+                    cmds.append(Command(K, reg[mode]))
+
+            if R is not None:
+                for mode in self.layer['R'][1]:
+                    cmds.append(Command(R, reg[mode]))
 
         return cmds

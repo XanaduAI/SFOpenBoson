@@ -34,8 +34,10 @@ from sfopenboson.hamiltonians import (displacement,
                                       cubic_phase,
                                       kerr)
 
+from sfopenboson.tests import BaseTest
 
-class TestDisplacement(unittest.TestCase):
+
+class TestDisplacement(BaseTest):
     """Tests for Displacement function"""
     def setUp(self):
         """parameters"""
@@ -44,29 +46,34 @@ class TestDisplacement(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         H, r = displacement(0, hbar=self.hbar)
         self.assertEqual(H, BosonOperator.identity())
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         H, _ = displacement(self.alpha, hbar=self.hbar)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_quad_operator(H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         H, _ = displacement(self.alpha, hbar=self.hbar)
         res = get_quad_operator(H, hbar=self.hbar).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         _, r = displacement(self.alpha)
         self.assertEqual(r, np.abs(self.alpha))
 
     def test_coefficients(self):
         """Test coefficients are correct"""
+        self.logTestName()
         H, _ = displacement(self.alpha, hbar=self.hbar)
         phi = np.angle(self.alpha)
 
@@ -77,7 +84,7 @@ class TestDisplacement(unittest.TestCase):
             self.assertEqual(coeff, 1j*expected)
 
 
-class TestXDisplacement(unittest.TestCase):
+class TestXDisplacement(BaseTest):
     """Tests for x displacement function"""
     def setUp(self):
         """parameters"""
@@ -86,33 +93,38 @@ class TestXDisplacement(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, r = xdisplacement(0)
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         H, _ = xdisplacement(self.x)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_boson_operator(H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         H, _ = xdisplacement(self.x)
         res = H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         _, r = xdisplacement(self.x)
         self.assertEqual(r, self.x)
 
     def test_coefficients(self):
         """Test coefficients are correct"""
+        self.logTestName()
         H, _ = xdisplacement(self.x)
         self.assertEqual(H, QuadOperator('p0', 1))
 
 
-class TestZDisplacement(unittest.TestCase):
+class TestZDisplacement(BaseTest):
     """Tests for z displacement function"""
     def setUp(self):
         """Parameters"""
@@ -121,33 +133,38 @@ class TestZDisplacement(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, r = zdisplacement(0)
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         H, _ = zdisplacement(self.p)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_boson_operator(H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         H, _ = zdisplacement(self.p)
         res = H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         _, r = zdisplacement(self.p)
         self.assertEqual(r, self.p)
 
     def test_coefficients(self):
         """Test coefficients are correct"""
+        self.logTestName()
         H, _ = zdisplacement(self.p)
         self.assertEqual(H, -QuadOperator('q0', 1))
 
 
-class TestRotation(unittest.TestCase):
+class TestRotation(BaseTest):
     """Tests for rotation function"""
     def setUp(self):
         """Parameters"""
@@ -156,33 +173,39 @@ class TestRotation(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, r = rotation(0)
         self.assertEqual(r, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         H, _ = rotation(self.phi, hbar=self.hbar)
         self.assertTrue(is_hermitian(H))
         self.assertTrue(is_hermitian(get_quad_operator(H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         H, _ = rotation(self.phi, hbar=self.hbar)
         res = get_quad_operator(H, hbar=self.hbar).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         _, r = rotation(self.phi, hbar=self.hbar)
         self.assertEqual(r, self.phi)
 
     def test_coefficients(self):
         """Test coefficients are correct"""
+        self.logTestName()
         H, _ = rotation(self.phi, hbar=self.hbar)
         self.assertEqual(H, -BosonOperator('0^ 0')*self.hbar)
 
     def test_quad_form(self):
         """Test it has the correct form using quadrature operators"""
+        self.logTestName()
         H, _ = rotation(self.phi, mode=1, hbar=self.hbar)
         H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
         expected = QuadOperator('q1 q1', -0.5)
@@ -191,7 +214,7 @@ class TestRotation(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestSqueezing(unittest.TestCase):
+class TestSqueezing(BaseTest):
     """Tests for squeezing function"""
     def setUp(self):
         """Parameters"""
@@ -202,25 +225,30 @@ class TestSqueezing(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = squeezing(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_quad_operator(self.H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = get_quad_operator(self.H).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.r)
 
     def test_quad_form(self):
         """Test it has the correct form using quadrature operators"""
+        self.logTestName()
         H, _ = squeezing(2, mode=1)
         H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
         expected = QuadOperator('q1 p1', -1)
@@ -228,7 +256,7 @@ class TestSqueezing(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestQuadraticPhase(unittest.TestCase):
+class TestQuadraticPhase(BaseTest):
     """Tests for quadratic phase function"""
     def setUp(self):
         """Parameters"""
@@ -238,25 +266,30 @@ class TestQuadraticPhase(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = quadratic_phase(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_boson_operator(self.H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = self.H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
         """Test bosonic form is correct"""
+        self.logTestName()
         H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
         expected = BosonOperator('0 0', -0.5)
         expected += BosonOperator('0^ 0', -1)
@@ -265,7 +298,7 @@ class TestQuadraticPhase(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestBeamsplitter(unittest.TestCase):
+class TestBeamsplitter(BaseTest):
     """Tests for beamsplitter function"""
     def setUp(self):
         """Parameters"""
@@ -276,25 +309,30 @@ class TestBeamsplitter(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = beamsplitter(0, 0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_quad_operator(self.H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = get_quad_operator(self.H).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.theta)
 
     def test_quad_form(self):
         """Test it has the correct form using quadrature operators"""
+        self.logTestName()
         H, _ = beamsplitter(np.pi/4, np.pi/2, mode1=1, mode2=3, hbar=self.hbar)
         H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
         expected = QuadOperator('q1 q3', -1)
@@ -302,7 +340,7 @@ class TestBeamsplitter(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestTwoModeSqueezing(unittest.TestCase):
+class TestTwoModeSqueezing(BaseTest):
     """Tests for two-mode squeezing function"""
     def setUp(self):
         """Parameters"""
@@ -313,25 +351,30 @@ class TestTwoModeSqueezing(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = two_mode_squeezing(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_quad_operator(self.H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = get_quad_operator(self.H).is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.r)
 
     def test_quad_form(self):
         """Test it has the correct form using quadrature operators"""
+        self.logTestName()
         H, _ = two_mode_squeezing(2, mode1=1, mode2=3, hbar=self.hbar)
         H = normal_ordered(get_quad_operator(H, hbar=self.hbar), hbar=self.hbar)
         expected = QuadOperator('q1 p3', 1)
@@ -339,7 +382,7 @@ class TestTwoModeSqueezing(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestControlledAddition(unittest.TestCase):
+class TestControlledAddition(BaseTest):
     """Tests for controlled addition function"""
     def setUp(self):
         """Parameters"""
@@ -349,25 +392,30 @@ class TestControlledAddition(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = controlled_addition(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_boson_operator(self.H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = self.H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
         """Test bosonic form is correct"""
+        self.logTestName()
         H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
         expected = BosonOperator('0 1', -1j)
         expected += BosonOperator('0 1^', 1j)
@@ -376,7 +424,7 @@ class TestControlledAddition(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestControlledPhase(unittest.TestCase):
+class TestControlledPhase(BaseTest):
     """Tests for controlled phase function"""
     def setUp(self):
         """Parameters"""
@@ -386,25 +434,30 @@ class TestControlledPhase(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = controlled_phase(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_boson_operator(self.H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = self.H.is_gaussian()
         self.assertTrue(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.s)
 
     def test_boson_form(self):
         """Test bosonic form is correct"""
+        self.logTestName()
         H = normal_ordered(get_boson_operator(self.H, hbar=self.hbar))
         expected = BosonOperator('0 1', -1)
         expected += BosonOperator('0 1^', -1)
@@ -413,7 +466,7 @@ class TestControlledPhase(unittest.TestCase):
         self.assertEqual(H, expected)
 
 
-class TestCubicPhase(unittest.TestCase):
+class TestCubicPhase(BaseTest):
     """Tests for cubic phase function"""
     def setUp(self):
         """Parameters"""
@@ -423,25 +476,29 @@ class TestCubicPhase(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = cubic_phase(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_boson_operator(self.H, hbar=self.hbar)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = self.H.is_gaussian()
         self.assertFalse(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.gamma)
 
 
-class TestKerr(unittest.TestCase):
+class TestKerr(BaseTest):
     """Tests for Kerr function"""
     def setUp(self):
         """Parameters"""
@@ -451,21 +508,25 @@ class TestKerr(unittest.TestCase):
 
     def test_identity(self):
         """Test alpha=0 gives identity"""
+        self.logTestName()
         _, t = two_mode_squeezing(0)
         self.assertEqual(t, 0)
 
     def test_hermitian(self):
         """Test output is hermitian"""
+        self.logTestName()
         self.assertTrue(is_hermitian(self.H))
         self.assertTrue(is_hermitian(get_quad_operator(self.H)))
 
     def test_gaussian(self):
         """Test output is gaussian"""
+        self.logTestName()
         res = get_quad_operator(self.H).is_gaussian()
         self.assertFalse(res)
 
     def test_time(self):
         """Test time parameter is correct"""
+        self.logTestName()
         self.assertEqual(self.t, self.kappa)
 
 

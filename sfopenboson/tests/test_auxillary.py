@@ -39,8 +39,10 @@ from sfopenboson.hamiltonians import (displacement,
                                       controlled_addition,
                                       controlled_phase)
 
+from sfopenboson.tests import BaseTest
 
-class TestQuadraticCoefficients(unittest.TestCase):
+
+class TestQuadraticCoefficients(BaseTest):
     """Tests for quadratic_coefficients"""
     def setUp(self):
         """set up"""
@@ -48,16 +50,19 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_non_hermitian(self):
         """Test exception with non-Hermitian Hamiltonian"""
+        self.logTestName()
         with self.assertRaisesRegex(ValueError, "Hamiltonian must be Hermitian"):
             quadratic_coefficients(QuadOperator('q0 p0'))
 
     def test_non_gaussian(self):
         """Test exception with non-Gaussian Hamiltonian"""
+        self.logTestName()
         with self.assertRaisesRegex(ValueError, "Hamiltonian must be Gaussian"):
             quadratic_coefficients(QuadOperator('q0 p0 p1'))
 
     def test_displacement_vector(self):
         """Test displacement vector extracted"""
+        self.logTestName()
         H = QuadOperator('q0', -0.432) + QuadOperator('p0', 3.213)
         A, d = quadratic_coefficients(H)
         expected_A = np.zeros([2, 2])
@@ -75,6 +80,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_Dgate_displacement(self):
         """Test displacement vector matches Dgate"""
+        self.logTestName()
         a = 0.23-0.432j
         H, t = displacement(a, hbar=self.hbar)
         _, d = quadratic_coefficients(get_quad_operator(H, self.hbar))
@@ -84,6 +90,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_Xgate_displacement(self):
         """Test displacement vector matches Xgate"""
+        self.logTestName()
         x = 0.1234
         H, _ = xdisplacement(x)
         _, d = quadratic_coefficients(H)
@@ -92,6 +99,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_Zgate_displacement(self):
         """Test displacement vector matches Zgate"""
+        self.logTestName()
         z = 0.654
         H, _ = zdisplacement(z)
         _, d = quadratic_coefficients(H)
@@ -100,6 +108,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_rotation_coeff(self):
         """Test quadratic coefficients for Rgate"""
+        self.logTestName()
         # one mode
         H, _ = rotation(0.23, hbar=self.hbar)
         res, d = quadratic_coefficients(get_quad_operator(H, self.hbar))
@@ -118,6 +127,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_squeeze_coeff(self):
         """Test quadratic coefficients for Sgate"""
+        self.logTestName()
         # one mode
         # pylint: disable=invalid-unary-operand-type
         H, _ = squeezing(0.23, hbar=self.hbar)
@@ -137,6 +147,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_quadratic_phase_coeff(self):
         """Test quadratic coefficients for Pgate"""
+        self.logTestName()
         # one mode
         H, _ = quadratic_phase(0.23)
         res, d = quadratic_coefficients(H)
@@ -155,6 +166,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_beamsplitter_coeff(self):
         """Test quadratic coefficients for BSgate"""
+        self.logTestName()
         # arbitrary beamsplitter
         theta = 0.5423
         phi = 0.3242
@@ -170,6 +182,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_two_mode_squeeze_coeff(self):
         """Test quadratic coefficients for S2gate"""
+        self.logTestName()
         H, _ = two_mode_squeezing(0.23, hbar=self.hbar)
         res, d = quadratic_coefficients(get_quad_operator(H, self.hbar))
         expected = np.fliplr(np.diag([1]*4))
@@ -178,6 +191,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_controlled_addition(self):
         """Test quadratic coefficients for CXgate"""
+        self.logTestName()
         H, _ = controlled_addition(0.23)
         res, d = quadratic_coefficients(H)
         expected = np.fliplr(np.diag([1, 0, 0, 1]))
@@ -186,6 +200,7 @@ class TestQuadraticCoefficients(unittest.TestCase):
 
     def test_controlled_phase(self):
         """Test quadratic coefficients for CZgate"""
+        self.logTestName()
         H, _ = controlled_phase(0.23)
         res, d = quadratic_coefficients(H)
         expected = np.zeros([4, 4])
@@ -194,16 +209,18 @@ class TestQuadraticCoefficients(unittest.TestCase):
         self.assertTrue(np.allclose(d, np.zeros([4])))
 
 
-class TestExtractTunneling(unittest.TestCase):
+class TestExtractTunneling(BaseTest):
     """Test Bose-Hubbard tunnelling extracted from BosonOperator"""
     def test_no_tunneling(self):
         """Test exception raised for no tunneling"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 0, 0)
             extract_tunneling(H)
 
     def test_too_many_terms(self):
         """Test exception raised for wrong number of terms"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0)
             H -= BosonOperator('0^ 1^')
@@ -217,6 +234,7 @@ class TestExtractTunneling(unittest.TestCase):
 
     def test_ladder_wrong_form(self):
         """Test exception raised for wrong ladder operators"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0)
             H -= BosonOperator('5^ 6^')
@@ -225,19 +243,30 @@ class TestExtractTunneling(unittest.TestCase):
 
     def test_coefficients_differ(self):
         """Test exception raised for differing coefficients"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = BosonOperator('0 1^', 0.5)
             H += BosonOperator('0^ 1', 1)
             extract_tunneling(H)
 
+    def test_complex_tunneling_coefficient(self):
+        """Test exception raised if the tunelling coefficient is complex"""
+        self.logTestName()
+        with self.assertRaises(BoseHubbardError):
+            H = BosonOperator('0 1^', 1+2j)
+            H += BosonOperator('0^ 1', 1+2j)
+            extract_tunneling(H)
+
     def test_tunneling_1x1(self):
         """Test exception raised 1x1 grid"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(1, 1, 1, 0)
             extract_tunneling(H)
 
     def test_tunneling_1x2(self):
         """Test extracted tunneling on 1x2 grid"""
+        self.logTestName()
         H = bose_hubbard(1, 2, 0.5, 0)
         res = extract_tunneling(H)
         expected = [[(0, 1)], 0.5]
@@ -245,25 +274,30 @@ class TestExtractTunneling(unittest.TestCase):
 
     def test_tunneling_2x2(self):
         """Test extracted tunneling on 2x2 grid"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 0.5, 0)
         res = extract_tunneling(H)
+        res[0] = sorted(res[0], key=lambda x: x[1])
         expected = [[(0, 1), (0, 2), (1, 3), (2, 3)], 0.5]
         self.assertEqual(res, expected)
 
     def test_tunneling_arbitrary(self):
         """Test extracted tunneling on arbitrary grid"""
+        self.logTestName()
         H = BosonOperator('0 1^', 0.5) + BosonOperator('0^ 1', 0.5)
         H += BosonOperator('0 2^', 0.5) + BosonOperator('0^ 2', 0.5)
         H += BosonOperator('1 2^', 0.5) + BosonOperator('1^ 2', 0.5)
         res = extract_tunneling(H)
+        res[0] = sorted(res[0], key=lambda x: x[0])
         expected = [[(0, 1), (0, 2), (1, 2)], -0.5]
         self.assertEqual(res, expected)
 
 
-class TestExtractOnsiteChemical(unittest.TestCase):
+class TestExtractOnsiteChemical(BaseTest):
     """Test Bose-Hubbard onsite interactions extracted from BosonOperator"""
     def test_incorrect_ladders(self):
         """Test exception raised for wrong ladder operators"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0.1, 0.2)
             H -= BosonOperator('5^ 5^ 5^ 5^')
@@ -272,6 +306,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_too_many_terms(self):
         """Test exception raised for wrong number of terms"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0.1, 0.2)
             H -= BosonOperator('0^ 0^ 0^ 0^')
@@ -284,6 +319,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_differing_chemical_potential(self):
         """Test exception raised for differing coefficients"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0.1, 0.2)
             H -= BosonOperator('5^ 5')
@@ -291,6 +327,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_wrong_term_length(self):
         """Test exception raised for wrong terms"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0.1, 0.2)
             H -= BosonOperator('5^ 5 5^')
@@ -299,6 +336,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_differing_onsite(self):
         """Test exception raised for differing coefficients"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 0.1, 0.2)
             H -= BosonOperator('5^ 5 5^ 5')
@@ -307,6 +345,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_only_chemical_potential(self):
         """Test case where there is non-zero mu and zero U"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 1, 0, 0.2)
         res = extract_onsite_chemical(H)
         expected = ([], [[0, 1, 2, 3], 0.2])
@@ -314,6 +353,7 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_only_onsite(self):
         """Test case where there is zero mu and non-zero U"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 1, 0.1, 0)
         res = extract_onsite_chemical(H)
         expected = ([[0, 1, 2, 3], 0.1], [])
@@ -321,22 +361,25 @@ class TestExtractOnsiteChemical(unittest.TestCase):
 
     def test_both(self):
         """Test case where there is non-zero mu and non-zero U"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 1, 0.1, 0.2)
         res = extract_onsite_chemical(H)
         expected = ([[0, 1, 2, 3], 0.1], [[0, 1, 2, 3], 0.2])
         self.assertEqual(res, expected)
 
 
-class TestExtractDipole(unittest.TestCase):
+class TestExtractDipole(BaseTest):
     """Test Bose-Hubbard dipoles extracted from BosonOperator"""
     def test_no_dipole(self):
         """Test case where there is zero V"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 1, 1, 1, 0)
         res = extract_dipole(H)
         self.assertEqual(res, [])
 
     def test_too_many_terms(self):
         """Test exception raised for wrong number of terms"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 1, 1, 0.5)
             H += BosonOperator('0^ 0 1^ 2', 0.5)
@@ -344,6 +387,7 @@ class TestExtractDipole(unittest.TestCase):
 
     def test_ladder_wrong_form(self):
         """Test exception raised for wrong ladder operators"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = bose_hubbard(2, 2, 1, 1, 1, 0.5)
             H += BosonOperator('5^ 5 6^ 6^')
@@ -352,6 +396,7 @@ class TestExtractDipole(unittest.TestCase):
 
     def test_coefficients_differ(self):
         """Test exception raised for differing coefficients"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = BosonOperator('0^ 0 1^ 1', 0.5)
             H += BosonOperator('0^ 0 2^ 2', 1)
@@ -359,20 +404,23 @@ class TestExtractDipole(unittest.TestCase):
 
     def test_2x2(self):
         """Test extracted dipole terms on 2x2 grid"""
+        self.logTestName()
         H = bose_hubbard(2, 2, 1, 0, 0, 0.5)
         res = extract_dipole(H)
+        res[0] = sorted(res[0], key=lambda x: x[0])
         expected = [[(0, 1), (0, 2), (1, 3), (2, 3)], 0.5]
         self.assertEqual(res, expected)
 
     def test_arbitrary(self):
         """Test extracted dipole terms on arbitrary grid"""
+        self.logTestName()
         H = BosonOperator('0^ 0 5^ 5', 0.1)
         res = extract_dipole(H)
         expected = [[(0, 5)], 0.1]
         self.assertEqual(res, expected)
 
 
-class TestTrotter(unittest.TestCase):
+class TestTrotter(BaseTest):
     """Test Bose-Hubbard trotter layers extracted from BosonOperator"""
     def setUp(self):
         """Test parameters"""
@@ -381,30 +429,29 @@ class TestTrotter(unittest.TestCase):
         self.mu = 0.25
         self.t = 1.068
         self.k = 20
+        self.V = 1/np.sqrt(3)
 
     def test_invalid(self):
         """Test exception raised for non-Bose-Hubbard Hamiltonian"""
+        self.logTestName()
         with self.assertRaises(BoseHubbardError):
             H = BosonOperator('0')
             _ = trotter_layer(H, self.t, self.k)
 
-    def test_dipole(self):
-        """Test exception raised for non-zero dipole terms"""
-        with self.assertRaises(BoseHubbardError):
-            H = bose_hubbard(2, 2, 1, 0.5, 0, 1)
-            _ = trotter_layer(H, self.t, self.k)
-
     def test_tunneling_2x2(self):
         """Test non-interacting 2x2 grid"""
+        self.logTestName()
         H = bose_hubbard(2, 2, self.J, 0, 0)
         res = trotter_layer(H, self.t, self.k)
         theta = -self.t*self.J/self.k
         phi = np.pi/2
         expected = {'BS': (theta, phi, [(0, 1), (0, 2), (1, 3), (2, 3)])}
+        res['BS'] = res['BS'][:2] + (sorted(res['BS'][2], key=lambda x: x[0]),)
         self.assertEqual(res, expected)
 
     def test_onsite_2x2(self):
         """Test on-site interacting 2x2 grid"""
+        self.logTestName()
         H = bose_hubbard(2, 2, self.J, self.U, 0)
         res = trotter_layer(H, self.t, self.k)
         theta = -self.t*self.J/self.k
@@ -416,10 +463,12 @@ class TestTrotter(unittest.TestCase):
             'K': (kappa, [0, 1, 2, 3]),
             'R': (r, [0, 1, 2, 3]),
         }
+        res['BS'] = res['BS'][:2] + (sorted(res['BS'][2], key=lambda x: x[0]),)
         self.assertEqual(res, expected)
 
     def test_chemical_potential_2x2(self):
         """Test on-site interacting and chemical potential on a 2x2 grid"""
+        self.logTestName()
         H = bose_hubbard(2, 2, self.J, self.U, self.mu)
         res = trotter_layer(H, self.t, self.k)
         theta = -self.t*self.J/self.k
@@ -431,16 +480,39 @@ class TestTrotter(unittest.TestCase):
             'K': (kappa, [0, 1, 2, 3]),
             'R': (r, [0, 1, 2, 3]),
         }
+        res['BS'] = res['BS'][:2] + (sorted(res['BS'][2], key=lambda x: x[0]),)
         self.assertEqual(res, expected)
 
+    def test_dipole_2x2(self):
+        """Test on-site interacting and dipole interactions on a 2x2 grid"""
+        self.logTestName()
+        H = bose_hubbard(2, 2, self.J, self.U, 0, self.V)
+        res = trotter_layer(H, self.t, self.k)
+        theta = -self.t*self.J/self.k
+        ckappa = -self.V*self.t/self.k
+        phi = np.pi/2
+        kappa = -self.t*self.U/(2*self.k)
+        r = -kappa
+        expected = {
+            'BS': (theta, phi, [(0, 1), (0, 2), (1, 3), (2, 3)]),
+            'CK': (ckappa, [(0, 1), (0, 2), (1, 3), (2, 3)]),
+            'K': (kappa, [0, 1, 2, 3]),
+            'R': (r, [0, 1, 2, 3]),
+        }
+        res['BS'] = res['BS'][:-1] + (sorted(res['BS'][-1], key=lambda x: x[0]),)
+        res['CK'] = res['CK'][:-1] + (sorted(res['CK'][-1], key=lambda x: x[0]),)
+        self.assertEqual(res, expected)
 
     def test_arbitrary(self):
         """Test on-site interacting and chemical potential on a 3-cycle"""
+        self.logTestName()
         H = BosonOperator('0 1^', -self.J) + BosonOperator('0^ 1', -self.J)
         H += BosonOperator('0 2^', -self.J) + BosonOperator('0^ 2', -self.J)
         H += BosonOperator('1 2^', -self.J) + BosonOperator('1^ 2', -self.J)
 
         res = trotter_layer(H, self.t, self.k)
+        res['BS'] = res['BS'][:2] + (sorted(res['BS'][2], key=lambda x: x[0]),)
+
         theta = -self.t*self.J/self.k
         phi = np.pi/2
         expected = {'BS': (theta, phi, [(0, 1), (0, 2), (1, 2)])}
@@ -458,6 +530,8 @@ class TestTrotter(unittest.TestCase):
             'R': (r, [0, 1, 2]),
         }
         res = trotter_layer(H, self.t, self.k)
+
+        res['BS'] = res['BS'][:2] + (sorted(res['BS'][2], key=lambda x: x[0]),)
         self.assertEqual(res, expected)
 
 

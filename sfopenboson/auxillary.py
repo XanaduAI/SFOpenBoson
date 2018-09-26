@@ -166,7 +166,11 @@ def extract_tunneling(H):
     if len(set(BS.values())) != 1:
         raise BoseHubbardError
 
-    return [list(BS.keys()), -t]
+    # check t is real
+    if t.imag != 0:
+        raise BoseHubbardError
+
+    return [list(BS.keys()), -t.real]
 
 
 def extract_onsite_chemical(H):
@@ -328,6 +332,8 @@ def trotter_layer(H, t, k):
               ``kappa`` acting on the list of modes provided.
             * ``'R': (r, modes)`` corresponding to rotation gates with parameter
               ``r`` acting on the list of modes provided.
+            * ``'CK': (kappa, modes)`` corresponding to a cross-Kerr interactions with parameter
+              ``kappa`` acting on the list of modes provided.
     """
     try:
         BS = extract_tunneling(H)
@@ -358,7 +364,7 @@ def trotter_layer(H, t, k):
         layer_dict['R'] = (t*U/(2*k), onsite[0])
 
     if dipole:
-        raise BoseHubbardError("Nearest-neighbour or dipole interactions "
-                               "not currently supported.")
+        V = dipole[1]
+        layer_dict['CK'] = (-t*V/k, dipole[0])
 
     return layer_dict
