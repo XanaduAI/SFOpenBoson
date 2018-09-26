@@ -40,9 +40,10 @@ from sfopenboson.hamiltonians import (displacement,
                                       controlled_phase)
 
 from sfopenboson.ops import GaussianPropagation
+from sfopenboson.tests import BaseTest
 
 
-class TestSingularCoefficients(unittest.TestCase):
+class TestSingularCoefficients(BaseTest):
     """Tests using singular Hamiltonians"""
     def setUp(self):
         """parameters"""
@@ -52,6 +53,7 @@ class TestSingularCoefficients(unittest.TestCase):
 
     def test_singular_coefficients(self):
         """Test that H=p^2/2+q has displacement (q,t)=(-t^2,-t)"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -66,7 +68,7 @@ class TestSingularCoefficients(unittest.TestCase):
         self.assertTrue(np.allclose(res, expected))
 
 
-class TestSingleModeGaussianGates(unittest.TestCase):
+class TestSingleModeGaussianGates(BaseTest):
     """Tests using single mode Gaussian gates"""
     def setUp(self):
         """parameters"""
@@ -75,6 +77,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
 
     def test_squeezing(self):
         """Test squeezing gives correct means and cov"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -104,6 +107,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
 
     def test_rotation(self):
         """Test rotation gives correct means and cov"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -133,6 +137,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
 
     def test_quadratic_phase(self):
         """Test quadratic phase gives correct means and cov"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -160,6 +165,7 @@ class TestSingleModeGaussianGates(unittest.TestCase):
 
     def test_displacement(self):
         """Test displacement gives correct means and cov"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -193,7 +199,7 @@ def init_layer(q):
     return q
 
 
-class TestTwoModeGaussianGatesLocal(unittest.TestCase):
+class TestTwoModeGaussianGatesLocal(BaseTest):
     """Tests for two mode Gaussian gates in local mode"""
     def setUp(self):
         """parameters"""
@@ -229,6 +235,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
 
     def test_beamsplitter(self):
         """Test beamsplitter produces correct cov and means"""
+        self.logTestName()
         self.eng.reset()
 
         H, t = beamsplitter(self.th, self.phi, hbar=self.hbar)
@@ -244,6 +251,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
 
     def test_two_mode_squeezing(self):
         """Test S2gate produces correct cov and means"""
+        self.logTestName()
         # NOTE: There is currently a bug in strawberry fields,
         # where the Bloch-Messiah decomposition returns an
         # incorrect result for matrices with degenerate eigenvalues.
@@ -262,6 +270,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
 
     def test_controlled_addition(self):
         """Test CXgate produces correct cov and means"""
+        self.logTestName()
         self.eng.reset()
 
         H, t = controlled_addition(self.r)
@@ -277,6 +286,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
 
     def test_controlled_phase(self):
         """Test CZgate produces correct cov and means"""
+        self.logTestName()
         self.eng.reset()
 
         H, t = controlled_phase(self.r)
@@ -291,7 +301,7 @@ class TestTwoModeGaussianGatesLocal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
 
-class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
+class TestTwoModeGaussianGatesGlobal(BaseTest):
     """Tests for two mode Gaussian gates in global mode"""
     def setUp(self):
         """parameters"""
@@ -331,6 +341,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
 
     def test_single_mode_gate(self):
         """Test Rgate gives correct means and cov in global mode"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -347,6 +358,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
 
     def test_two_mode_gate(self):
         """Test S2gate gives correct means and cov in global mode"""
+        self.logTestName()
         self.eng.reset()
         q = self.eng.register
 
@@ -362,7 +374,7 @@ class TestTwoModeGaussianGatesGlobal(unittest.TestCase):
         self.assertTrue(np.allclose(resD, expD))
 
 
-class TestQuadraticAndLinear(unittest.TestCase):
+class TestQuadraticAndLinear(BaseTest):
     """Tests for Hamiltonians with quadratic and linear coefficients"""
     def setUp(self):
         """parameters"""
@@ -384,6 +396,7 @@ class TestQuadraticAndLinear(unittest.TestCase):
 
     def test_displaced_oscillator(self):
         """Test that a forced quantum oscillator produces the correct
+        self.logTestName()
         trajectory in the phase space"""
         H = QuadOperator('q0 q0', 0.5)
         H += QuadOperator('p0 p0', 0.5)
@@ -408,7 +421,7 @@ class TestQuadraticAndLinear(unittest.TestCase):
         self.assertTrue(np.allclose(res, expected))
 
 
-class TestToolchain(unittest.TestCase):
+class TestToolchain(BaseTest):
     """Tests for the GaussianPropagation toolchain"""
     def setUp(self):
         """parameters"""
@@ -430,6 +443,7 @@ class TestToolchain(unittest.TestCase):
 
     def test_outside_context(self):
         """test setting hbar outside of engine context"""
+        self.logTestName()
         H, t = rotation(self.phi)
         Ugate = GaussianPropagation(H, t, hbar=self.hbar)
         resD, resV = self.ref_circuit(Ugate)
@@ -442,12 +456,14 @@ class TestToolchain(unittest.TestCase):
 
     def test_outside_context_no_hbar(self):
         """test exception if no hbar outside of engine context"""
+        self.logTestName()
         with self.assertRaises(ValueError):
             H, t = rotation(self.phi)
             GaussianPropagation(H, t)
 
     def test_non_hermitian(self):
         """test exception if H is not hermitian"""
+        self.logTestName()
         with self.assertRaises(ValueError):
             H = QuadOperator('q0', 1+2j)
             GaussianPropagation(H, hbar=2.)

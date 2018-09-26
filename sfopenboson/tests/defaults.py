@@ -11,9 +11,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Test defaults"""
+import logging
+import os
 
-"""Version information.
-   Version number (major.minor.patch[-label])
-"""
+import unittest
 
-__version__ = '0.2.0'
+
+if "LOGGING" in os.environ:
+    logLevel = os.environ["LOGGING"]
+    print('Logging:', logLevel)
+    numeric_level = getattr(logging, logLevel.upper(), 10)
+else:
+    numeric_level = 100
+
+
+logging.basicConfig(level=numeric_level, format='\n%(asctime)s %(levelname)s %(message)s', datefmt='%H:%M:%S')
+logging.captureWarnings(True)
+
+
+class BaseTest(unittest.TestCase):
+
+    def logTestName(self):
+        logging.info('{}'.format(self.id()))

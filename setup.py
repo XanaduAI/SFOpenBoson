@@ -24,7 +24,7 @@ with open("sfopenboson/_version.py") as f:
 requirements = [
     "numpy>=1.13",
     "scipy>=1.0.0",
-    "strawberryfields>=0.7.3",
+    "strawberryfields>=0.8.0",
     "openfermion>=0.7"
 ]
 
