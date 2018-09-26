@@ -249,6 +249,14 @@ class TestExtractTunneling(BaseTest):
             H += BosonOperator('0^ 1', 1)
             extract_tunneling(H)
 
+    def test_complex_tunneling_coefficient(self):
+        """Test exception raised if the tunelling coefficient is complex"""
+        self.logTestName()
+        with self.assertRaises(BoseHubbardError):
+            H = BosonOperator('0 1^', 1+2j)
+            H += BosonOperator('0^ 1', 1+2j)
+            extract_tunneling(H)
+
     def test_tunneling_1x1(self):
         """Test exception raised 1x1 grid"""
         self.logTestName()

@@ -17,13 +17,10 @@ import os
 
 import unittest
 
-
-if "LOGGING" in os.environ:
-    logLevel = os.environ["LOGGING"]
-    print('Logging:', logLevel)
-    numeric_level = getattr(logging, logLevel.upper(), 10)
-else:
-    numeric_level = 100
+# Set the logging based on an environment variable.
+# default logging is set to WARNING.
+logLevel = os.environ.get("LOGGING", "WARNING")
+numeric_level = getattr(logging, logLevel.upper(), 10)
 
 
 logging.basicConfig(level=numeric_level, format='\n%(asctime)s %(levelname)s %(message)s', datefmt='%H:%M:%S')

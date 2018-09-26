@@ -326,7 +326,7 @@ class BoseHubbardPropagation(Decomposition):
                 cmds.append(Command(BS, (reg[q0], reg[q1])))
 
             if CK is not None:
-                for q0, q1 in self.layer['CK'][2]:
+                for q0, q1 in self.layer['CK'][1]:
                     cmds.append(Command(CK, (reg[q0], reg[q1])))
 
             if K is not None:
