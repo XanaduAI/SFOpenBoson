@@ -18,7 +18,7 @@ import strawberryfields as sf
 
 # defaults
 TOL = 1e-2
-HBAR = 1.7
+HBAR = 2
 
 
 @pytest.fixture
