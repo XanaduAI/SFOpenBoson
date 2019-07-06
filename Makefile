@@ -1,6 +1,6 @@
 PYTHON := $(shell which python3 2>/dev/null)
 TESTRUNNER := -m pytest sfopenboson/tests -p no:warnings
-COVERAGE := --cov=strawberryfields --cov-report=html:coverage_html_report --cov-append
+COVERAGE := --cov=sfopenboson --cov-report=term --cov-report=html:coverage_html_report
 
 .PHONY: help
 help:
@@ -47,6 +47,4 @@ test:
 
 coverage:
 	@echo "Generating coverage report..."
-	$(COVERAGE) $(COPTS) $(TESTRUNNER)
-	$(COVERAGE) report
-	$(COVERAGE) html
+	$(PYTHON) $(TESTRUNNER) $(COVERAGE)
