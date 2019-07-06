@@ -139,9 +139,6 @@ class GaussianPropagation(Decomposition):
             the applied qumodes (q[i], q[j],...). For instance, a_0 applies to q[i], a_1 applies to q[j].
             If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register,
             i.e., a_0 applies to q[0], applies to q[1], etc.
-        hbar (float): the value of :math:`\hbar` used in the definition of the :math:`\x`
-            and :math:`\p` quadrature operators. Note that if used inside of an engine
-            context, the hbar value of the engine will override this keyword argument.
     """
     ns = None
     def __init__(self, operator, t=1, mode='local'):
@@ -248,12 +245,9 @@ class BoseHubbardPropagation(Decomposition):
             the applied qumodes (q[i], q[j],...). For instance, a_0 applies to q[i], a_1 applies to q[j].
             If instead ``mode='global'``, the Hamiltonian is instead applied to the entire register,
             i.e., a_0 applies to q[0], applies to q[1], etc.
-        hbar (float): the value of :math:`\hbar` used in the definition of the :math:`\x`
-            and :math:`\p` quadrature operators. Note that if used inside of an engine
-            context, the hbar value of the engine will override this keyword argument.
     """
     ns = None
-    def __init__(self, operator, t=1, k=20, mode='local', hbar=None):
+    def __init__(self, operator, t=1, k=20, mode='local'):
         super().__init__([t])
 
         if not is_hermitian(operator):
