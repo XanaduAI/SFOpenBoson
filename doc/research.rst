@@ -4,11 +4,9 @@ Research and contribution
 Research
 ---------------
 
-If you are doing research using SFOpenBoson and Strawberry Fields, please cite the `Strawberry Fields <https://arxiv.org/abs/1804.03159>`_ and `OpenFermion <https://arxiv.org/abs/1710.07629>`_ papers:
+If you are doing research using SFOpenBoson and Strawberry Fields, please cite the `Strawberry Fields <https://quantum-journal.org/papers/q-2019-03-11-129>`_ and `OpenFermion <https://arxiv.org/abs/1710.07629>`_ papers:
 
-  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. Strawberry Fields: A Software Platform for Photonic Quantum Computing. *arXiv*, 2018. arXiv:1804.03159
-
-
+  Nathan Killoran, Josh Izaac, Nicolás Quesada, Ville Bergholm, Matthew Amy, and Christian Weedbrook. "Strawberry Fields: A Software Platform for Photonic Quantum Computing", Quantum, 3, 129 (2019).
 
   Jarrod R. McClean, Ian D. Kivlichan, Kevin J. Sung, Damian S. Steiger, Yudong Cao, Chengyu Dai, E. Schuyler Fried, Craig Gidney, Brendan Gimby, Thomas Häner, Tarini Hardikar, Vojtĕch Havlíček, Cupjin Huang, Zhang Jiang, Matthew Neeley, Thomas O'Brien, Isil Ozfidan, Maxwell D. Radin, Jhonathan Romero, Nicholas Rubin, Nicolas P. D. Sawaya, Kanav Setia, Sukin Sim, Mark Steudtner, Wei Sun, Fang Zhang and Ryan Babbush. OpenFermion: The Electronic Structure Package for Quantum Computers. *arXiv*, 2017. arXiv:1710.07629.
 

@@ -79,10 +79,3 @@ SFOpenBoson is **free** and **open source**, released under the Apache License, 
    code/ops
    code/hamiltonians
    code/auxillary
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

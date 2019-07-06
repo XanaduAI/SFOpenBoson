@@ -1,2 +1,2 @@
 sphinxcontrib-bibtex
-strawberryfields>=0.7.3
+strawberryfields>=0.11

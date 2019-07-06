@@ -49,8 +49,8 @@ Alternatively, you can set ``mode='global'``, and the Hamiltonian is instead app
 
 Let's set up the two qumode quantum circuit — each mode corresponds to a node in the lattice — and propagating the Bose-Hubbard Hamiltonian ``H`` we defined in the previous section, starting from the initial state :math:`\ket{0,2}` in the Fock space, for time :math:`t=1.086` and Lie product truncation :math:`k=20`:
 
->>> eng, q = sf.Engine(2)
->>> with eng:
+>>> prog = sf.Program(2)
+>>> with prog.context as q:
 ...     Fock(2) | q[1]
 ...     BoseHubbardPropagation(H, 1.086, 20) | q
 
@@ -58,7 +58,8 @@ Now, we can run this simulation using the `Fock backend of Strawberry Fields <ht
 
 .. note:: In the Bose-Hubbard model, the number of particles in the system remains constant, so we do not need to increase the cutoff dimension of the simulation beyond the total number of photons in the initial state.
 
->>> state = eng.run('fock', cutoff_dim=3)
+>>> eng = sf.Engine("fock", backend_options={"cutoff_dim": 3})
+>>> state = eng.run(prog).state
 >>> state.fock_prob([2,0])
 0.52240124572001967
 >>> state.fock_prob([1,1])
@@ -96,14 +97,15 @@ Next, let's add an on-site interaction term, with strength :math:`U=1.5`:
 
 As before, we use :class:`~.BoseHubbardPropagation` to simulate this model for time :math:`t=1.086`, starting from initial state :math:`\ket{2,0}`. Due to the increased size of this model, let's increase the Lie product truncation to :math:`k=100`:
 
->>> eng, q = sf.Engine(3)
->>> with eng:
+>>> prog = sf.Program(3)
+>>> with prog.context as q:
 ...     Fock(2) | q[0]
 ...     BoseHubbardPropagation(H, 1.086, 100) | q
 
 Running the circuit, and checking some output probabilities:
 
->>> state = eng.run('fock', cutoff_dim=3)
+>>> eng = sf.Engine("fock", backend_options={"cutoff_dim": 3})
+>>> state = eng.run(prog).state
 >>> for i in ([2,0,0], [1,1,0], [1,0,1], [0,2,0], [0,1,1], [0,0,2]):
 >>> 	print(state.fock_prob(i))
 0.0854670760113
