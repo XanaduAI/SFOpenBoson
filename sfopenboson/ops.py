@@ -15,7 +15,7 @@ r"""
 Operations
 ==========
 
-This file contains the Strawberry Field quantum operations
+This file contains the Strawberry Fields quantum operations
 that decompose the BosonOperator and QuadOperator from OpenFermion.
 
 These operations are used directly in BlackBird code, complementing
@@ -25,16 +25,17 @@ For example:
 
 .. code-block:: python
 
-    eng, q = sf.Engine(3, hbar=2)
+    prog = sf.Program(3)
+    eng = sf.Engine("gaussian")
 
     H1 = BosonOperator('0^ 0')
     H2 = QuadOperator('q0 p0') + QuadOperator('p0 q0') - QuadOperator('p2 p2')
 
-    with eng:
+    with prog.context as q:
         GaussianPropagation(H1) | q[0]
         GaussianPropagation(H2, t=0.5, 'global') | q
 
-    state = eng.run('gaussian')
+    state = eng.run(prog).state
 
 The global argument indicates to Strawberry Fields that the Hamiltonian
 should be applied to the entire register, with the operator indices
@@ -80,6 +81,8 @@ from openfermion.ops import QuadOperator, BosonOperator
 from openfermion.transforms import get_quad_operator, get_boson_operator
 from openfermion.utils import is_hermitian, prune_unused_indices
 
+import strawberryfields as sf
+import strawberryfields.program_utils as pu
 from strawberryfields.ops import (BSgate,
                                   CKgate,
                                   Decomposition,
@@ -88,8 +91,11 @@ from strawberryfields.ops import (BSgate,
                                   Rgate,
                                   Xgate,
                                   Zgate)
-from strawberryfields.engine import Engine as _Engine, Command
+from strawberryfields.engine import Engine as _Engine
+from strawberryfields.program_utils import Command
 from strawberryfields.backends.shared_ops import sympmat
+
+from strawberryfields.devicespecs import GaussianSpecs, FockSpecs, TFSpecs
 
 from .auxillary import trotter_layer, quadratic_coefficients
 
@@ -138,18 +144,8 @@ class GaussianPropagation(Decomposition):
             context, the hbar value of the engine will override this keyword argument.
     """
     ns = None
-    def __init__(self, operator, t=1, mode='local', hbar=None):
+    def __init__(self, operator, t=1, mode='local'):
         super().__init__([t])
-
-        try:
-            # pylint: disable=protected-access
-            self.hbar = _Engine._current_context.hbar
-        except AttributeError:
-            if hbar is None:
-                raise ValueError("Either specify the hbar keyword argument, "
-                                 "or use this operator inside an engine context.")
-            else:
-                self.hbar = hbar
 
         if not is_hermitian(operator):
             raise ValueError("Hamiltonian must be Hermitian.")
@@ -160,7 +156,7 @@ class GaussianPropagation(Decomposition):
             quad_operator = operator
 
         if isinstance(quad_operator, BosonOperator):
-            quad_operator = get_quad_operator(quad_operator, hbar=self.hbar)
+            quad_operator = get_quad_operator(quad_operator, hbar=sf.hbar)
 
         A, d = quadratic_coefficients(quad_operator)
 
@@ -168,7 +164,7 @@ class GaussianPropagation(Decomposition):
             self.ns = A.shape[0]//2
         elif mode == 'global':
             # pylint: disable=protected-access
-            self.ns = _Engine._current_context.num_subsystems
+            self.ns = pu.Program_current_context.num_subsystems
             if A.shape[0] < 2*self.ns:
                 # expand the quadratic coefficient matrix to take
                 # into account the extra modes
@@ -208,7 +204,7 @@ class GaussianPropagation(Decomposition):
     def decompose(self, reg):
         """Return the decomposed commands"""
         cmds = []
-        cmds += [Command(GaussianTransform(self.S, hbar=self.hbar), reg, decomp=True)]
+        cmds += [Command(GaussianTransform(self.S), reg, decomp=True)]
         if self.disp:
             cmds += [Command(Xgate(x), reg, decomp=True) for x in self.d[:self.ns] if x != 0.]
             cmds += [Command(Zgate(z), reg, decomp=True) for z in self.d[self.ns:] if z != 0.]
@@ -260,16 +256,6 @@ class BoseHubbardPropagation(Decomposition):
     def __init__(self, operator, t=1, k=20, mode='local', hbar=None):
         super().__init__([t])
 
-        try:
-            # pylint: disable=protected-access
-            self.hbar = _Engine._current_context.hbar
-        except AttributeError:
-            if hbar is None:
-                raise ValueError("Either specify the hbar keyword argument, "
-                                 "or use this operator inside an engine context.")
-            else:
-                self.hbar = hbar
-
         if not is_hermitian(operator):
             raise ValueError("Hamiltonian must be Hermitian.")
 
@@ -282,7 +268,7 @@ class BoseHubbardPropagation(Decomposition):
             boson_operator = operator
 
         if isinstance(boson_operator, QuadOperator):
-            boson_operator = get_boson_operator(boson_operator, hbar=self.hbar)
+            boson_operator = get_boson_operator(boson_operator, hbar=sf.hbar)
 
         self.layer = trotter_layer(boson_operator, t, k)
         self.num_layers = k
@@ -293,7 +279,7 @@ class BoseHubbardPropagation(Decomposition):
             self.ns = num_modes
         elif mode == 'global':
             # pylint: disable=protected-access
-            self.ns = _Engine._current_context.num_subsystems
+            self.ns = pu.Program_current_context.num_subsystems
 
     def decompose(self, reg):
         # make BS gate
@@ -338,3 +324,8 @@ class BoseHubbardPropagation(Decomposition):
                     cmds.append(Command(R, reg[mode]))
 
         return cmds
+
+
+GaussianSpecs.decompositions.update({"GaussianPropagation": {}})
+FockSpecs.decompositions.update({"BoseHubbardPropagation": {}, "GaussianPropagation": {}})
+TFSpecs.decompositions.update({"BoseHubbardPropagation": {}, "GaussianPropagation": {}})

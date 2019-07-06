@@ -13,7 +13,7 @@
 # limitations under the License.
 """Test Bose-Hubbard decomposition"""
 # pylint: disable=expression-not-assigned, too-many-instance-attributes
-import unittest
+import pytest
 
 import numpy as np
 from scipy.linalg import expm
@@ -26,173 +26,174 @@ import strawberryfields as sf
 from strawberryfields.ops import Fock, Sgate
 
 from sfopenboson.ops import BoseHubbardPropagation
-from sfopenboson.tests import BaseTest
 
 
-class TestBoseHubbardPropagation(BaseTest):
+class TestBoseHubbardPropagation:
     """Tests for the BoseHubbardPropagation operation"""
-    def setUp(self):
-        """Parameters"""
-        self.hbar = 2.
-        self.eng, _ = sf.Engine(2, hbar=self.hbar)
-        self.J = -1
-        self.U = 1.5
-        self.V = 1/np.sqrt(2)
-        self.t = 1.086
-        self.k = 20
-        self.tol = 1e-2
+    J = -1
+    U = 1.5
+    V = 1/np.sqrt(2)
+    t = 1.086
+    k = 20
 
-    def test_1x2_no_onsite(self):
+    @pytest.fixture
+    def eng(self, hbar):
+        """Engine to use for the tests"""
+        sf.hbar = hbar
+        return sf.Engine("fock", backend_options={"cutoff_dim": 7})
+
+    def test_1x2_no_onsite(self, eng, tol):
         """Test a 1x2 lattice Bose-Hubbard model"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(2)
         H = bose_hubbard(1, 2, self.J, 0)
 
-        with self.eng:
+        with prog.context as q:
             Fock(2) | q[0]
             BoseHubbardPropagation(H, self.t, self.k) | q
 
-        state = self.eng.run('fock', cutoff_dim=7)
+        state = eng.run(prog).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
-    def test_1x2(self):
+    def test_1x2(self, eng, tol):
         """Test a 1x2 lattice Bose-Hubbard model"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(2)
         H = bose_hubbard(1, 2, self.J, self.U)
 
-        with self.eng:
+        with prog.context as q:
             Fock(2) | q[0]
             BoseHubbardPropagation(H, self.t, self.k) | q
 
-        state = self.eng.run('fock', cutoff_dim=7)
+        state = eng.run(prog).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
-    def test_1x2_dipole(self):
+    def test_1x2_dipole(self, eng, tol):
         """Test a 1x2 lattice Bose-Hubbard model with nearest-neighbour interactions"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(2)
         H = bose_hubbard(1, 2, self.J, self.U, 0, self.V)
 
-        with self.eng:
+        with prog.context as q:
             Fock(2) | q[0]
             BoseHubbardPropagation(H, self.t, self.k) | q
 
-        state = self.eng.run('fock', cutoff_dim=7)
+        state = eng.run(prog).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1]) + self.V*np.diag([0, 1, 0])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
-    def test_1x2_tf(self):
+    def test_1x2_tf(self, hbar, tol):
         """Test a 1x2 lattice Bose-Hubbard model using TF"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        try:
+            import tensorflow as tf
+        except (ImportError, ModuleNotFoundError):
+            pytest.skip("TensorFlow not installed.")
+
+        if tf.__version__[:3] != "1.3":
+            pytest.skip("Incorrect TensorFlow version")
+
+        sf.hbar = hbar
+        prog = sf.Program(2)
         H = bose_hubbard(1, 2, self.J, self.U)
 
-        with self.eng:
+        with prog.context as q:
             Fock(2) | q[0]
             BoseHubbardPropagation(H, self.t, self.k) | q
 
-        state = self.eng.run('tf', cutoff_dim=3)
+        eng = sf.Engine("tf", backend_options={"cutoff_dim": 7})
+        state = eng.run(prog).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
 
-class TestBoseHubbardGlobalLocal(BaseTest):
+class TestBoseHubbardGlobalLocal:
     """Tests for the BoseHubbardPropagation
     operation local and global modes"""
-    def setUp(self):
-        self.hbar = 2.
-        self.eng, _ = sf.Engine(3, hbar=self.hbar)
-        self.J = -1
-        self.U = 1.5
-        self.t = 1.086
-        self.k = 20
-        self.tol = 1e-2
+    J = -1
+    U = 1.5
+    t = 1.086
+    k = 20
+    H = bose_hubbard(1, 2, J, U)
 
-        self.H = bose_hubbard(1, 2, self.J, self.U)
+    @pytest.fixture
+    def eng(self, cutoff, hbar):
+        """Engine to use for the tests"""
+        sf.hbar = hbar
+        return sf.Engine("fock", backend_options={"cutoff_dim": cutoff})
 
-    def test_local(self):
+    @pytest.mark.parametrize("cutoff", [7])
+    def test_local(self, eng, tol):
         """Test a 1x2 lattice Bose-Hubbard model in local mode"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(3)
 
-        with self.eng:
+        with prog.context as q:
             Sgate(0.1) | q[1]
             Fock(2) | q[0]
             BoseHubbardPropagation(self.H, self.t, self.k) | (q[0], q[2])
 
-        state = self.eng.run('fock', cutoff_dim=7, modes=[0, 2])
+        state = eng.run(prog, modes=[0, 2]).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
-    def test_global(self):
+    @pytest.mark.parametrize("cutoff", [7])
+    def test_global(self, eng, tol):
         """Test a 1x2 lattice Bose-Hubbard model in global mode"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(3)
 
-        with self.eng:
+        with prog.context as q:
             Sgate(0.1) | q[2]
             Fock(2) | q[0]
             BoseHubbardPropagation(self.H, self.t, self.k, mode='global') | q
 
-        state = self.eng.run('fock', cutoff_dim=7, modes=[0, 1])
+        state = eng.run(prog, modes=[0, 1]).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
         init_state = np.array([1, 0, 0])
         exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
 
-    def test_circulant(self):
+    @pytest.mark.parametrize("cutoff", [3])
+    def test_circulant(self, eng, tol):
         """Test a 3-cycle Bose-Hubbard model in local mode"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
+        prog = sf.Program(3)
+
         # tunnelling terms
         H = BosonOperator('0 1^', -self.J) + BosonOperator('0^ 1', -self.J)
         H += BosonOperator('0 2^', -self.J) + BosonOperator('0^ 2', -self.J)
@@ -203,11 +204,11 @@ class TestBoseHubbardGlobalLocal(BaseTest):
         H += BosonOperator('1^ 1 1^ 1', 0.5*self.U) - BosonOperator('1^ 1', 0.5*self.U)
         H += BosonOperator('2^ 2 2^ 2', 0.5*self.U) - BosonOperator('2^ 2', 0.5*self.U)
 
-        with self.eng:
+        with prog.context as q:
             Fock(2) | q[0]
             BoseHubbardPropagation(H, self.t, 50) | q
 
-        state = self.eng.run('fock', cutoff_dim=3)
+        state = eng.run(prog).state
 
         # 2D hamiltonian
         A = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]])
@@ -230,77 +231,35 @@ class TestBoseHubbardGlobalLocal(BaseTest):
 
         tol = 1e-1
 
-        self.assertTrue(np.allclose(state.fock_prob([2, 0, 0]), exp[0], rtol=tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1, 0]), exp[1], rtol=tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 0, 1]), exp[2], rtol=tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2, 0]), exp[3], rtol=tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 1, 1]), exp[4], rtol=tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 0, 2]), exp[5], rtol=tol))
+        assert np.allclose(state.fock_prob([2, 0, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1, 0]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 0, 1]), exp[2], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2, 0]), exp[3], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 1, 1]), exp[4], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 0, 2]), exp[5], rtol=tol)
 
 
-class TestToolchain(BaseTest):
+class TestToolchain:
     """Tests for the BoseHubbardPropagation toolchain"""
-    def setUp(self):
-        """parameters"""
-        self.hbar = 2.
-        self.eng, _ = sf.Engine(2, hbar=self.hbar)
-        self.J = -1
-        self.U = 1.5
-        self.t = 1.086
-        self.k = 20
-        self.tol = 1e-2
-
-        self.H = bose_hubbard(1, 2, self.J, self.U)
-        self.Hquad = get_quad_operator(self.H, hbar=self.hbar)
-
-    def test_hbar_outside_context(self):
-        """Tests setting hbar outside the engine"""
-        self.logTestName()
-        self.eng.reset()
-        q = self.eng.register
-        HBH = BoseHubbardPropagation(self.Hquad, self.t, self.k, hbar=self.hbar)
-
-        with self.eng:
-            # pylint: disable=pointless-statement
-            Fock(2) | q[0]
-            HBH | q
-
-        state = self.eng.run('fock', cutoff_dim=7)
-
-        Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
-            + self.U*np.diag([1, 0, 1])
-        init_state = np.array([1, 0, 0])
-        exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
-
-        self.assertTrue(np.allclose(state.fock_prob([2, 0]), exp[0], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([1, 1]), exp[1], rtol=self.tol))
-        self.assertTrue(np.allclose(state.fock_prob([0, 2]), exp[2], rtol=self.tol))
-
-    def test_outside_context_no_hbar(self):
-        """Tests exception if outside the engine with no hbar"""
-        self.logTestName()
-        with self.assertRaises(ValueError):
-            BoseHubbardPropagation(self.Hquad, self.t, self.k)
+    J = -1
+    U = 1.5
+    t = 1.086
+    k = 20
+    H = bose_hubbard(1, 2, J, U)
 
     def test_non_hermitian(self):
         """Tests exception if non-Hermitian H"""
-        self.logTestName()
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             H = QuadOperator('q0', 1+2j)
-            BoseHubbardPropagation(H, self.t, self.k, hbar=self.hbar)
+            BoseHubbardPropagation(H, self.t, self.k)
 
     def test_invalid_k(self):
         """Tests exception if k<=0 or k is non-integer"""
-        self.logTestName()
-        with self.assertRaises(ValueError):
-            BoseHubbardPropagation(self.H, self.t, 0, hbar=self.hbar)
+        with pytest.raises(ValueError):
+            BoseHubbardPropagation(self.H, self.t, 0)
 
-        with self.assertRaises(ValueError):
-            BoseHubbardPropagation(self.H, self.t, -2, hbar=self.hbar)
+        with pytest.raises(ValueError):
+            BoseHubbardPropagation(self.H, self.t, -2)
 
-        with self.assertRaises(ValueError):
-            BoseHubbardPropagation(self.H, self.t, 7.12, hbar=self.hbar)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        with pytest.raises(ValueError):
+            BoseHubbardPropagation(self.H, self.t, 7.12)

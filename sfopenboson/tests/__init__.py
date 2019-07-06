@@ -12,4 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test module""" # pragma: no cover
-from .defaults import BaseTest
