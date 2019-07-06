@@ -204,10 +204,10 @@ class GaussianPropagation(Decomposition):
     def decompose(self, reg):
         """Return the decomposed commands"""
         cmds = []
-        cmds += [Command(GaussianTransform(self.S), reg, decomp=True)]
+        cmds += [Command(GaussianTransform(self.S), reg)]
         if self.disp:
-            cmds += [Command(Xgate(x), reg, decomp=True) for x in self.d[:self.ns] if x != 0.]
-            cmds += [Command(Zgate(z), reg, decomp=True) for z in self.d[self.ns:] if z != 0.]
+            cmds += [Command(Xgate(x), reg) for x in self.d[:self.ns] if x != 0.]
+            cmds += [Command(Zgate(z), reg) for z in self.d[self.ns:] if z != 0.]
         return cmds
 
 
