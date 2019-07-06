@@ -6,12 +6,13 @@ python:
 env:
   - LOGGING=info
 install:
+  - pip install pip --upgrade
   - pip install -r requirements.txt
-  - pip install wheel codecov
+  - pip install wheel codecov pytest pytest-cov --upgrade
   - python3 setup.py bdist_wheel
   - pip install dist/SFOpenBoson*.whl
 script:
-  - coverage3 run -m unittest discover sfopenboson/tests
+  - make coverage
 after_success:
   - codecov
 notifications:
