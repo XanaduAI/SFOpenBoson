@@ -1,6 +1,8 @@
 # .coveragerc to control coverage.py
 [run]
 source = sfopenboson
+omit =
+    sfopenboson/tests/*.py
 
 [report]
 # Regexes for lines to exclude from consideration
