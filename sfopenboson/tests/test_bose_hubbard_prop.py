@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test Bose-Hubbard decomposition"""
-# pylint: disable=expression-not-assigned, too-many-instance-attributes
+# pylint: disable=expression-not-assigned,too-many-instance-attributes,no-self-use
 import pytest
 
 import numpy as np
 from scipy.linalg import expm
 
 from openfermion.ops import BosonOperator, QuadOperator
-from openfermion.transforms import get_quad_operator
 from openfermion.hamiltonians import bose_hubbard
 
 import strawberryfields as sf

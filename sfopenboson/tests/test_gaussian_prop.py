@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for GaussianPropagation operation"""
-# pylint: disable=expression-not-assigned
+# pylint: disable=expression-not-assigned,no-self-use,too-few-public-methods
 import pytest
 
 import numpy as np

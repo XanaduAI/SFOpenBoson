@@ -91,7 +91,6 @@ from strawberryfields.ops import (BSgate,
                                   Rgate,
                                   Xgate,
                                   Zgate)
-from strawberryfields.engine import Engine as _Engine
 from strawberryfields.program_utils import Command
 from strawberryfields.backends.shared_ops import sympmat
 

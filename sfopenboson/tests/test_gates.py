@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for the CV gate Hamiltonians"""
-import pytest
-
+#pylint: disable=no-self-use
 import numpy as np
 
 from openfermion.ops import BosonOperator, QuadOperator
@@ -56,7 +55,7 @@ class TestDisplacement:
         res = get_quad_operator(H, hbar=hbar).is_gaussian()
         assert res
 
-    def test_time(self, hbar):
+    def test_time(self):
         """Test time parameter is correct"""
         _, r = displacement(self.alpha)
         assert r == np.abs(self.alpha)
@@ -202,7 +201,7 @@ class TestSqueezing:
 
     def test_time(self, hbar):
         """Test time parameter is correct"""
-        H, t = squeezing(self.r, self.phi, hbar=hbar)
+        _, t = squeezing(self.r, self.phi, hbar=hbar)
         assert t == self.r
 
     def test_quad_form(self, hbar):
@@ -424,7 +423,7 @@ class TestKerr:
 
     def test_hermitian(self, hbar):
         """Test output is hermitian"""
-        H, t = kerr(self.kappa, hbar=hbar)
+        H, _ = kerr(self.kappa, hbar=hbar)
         assert is_hermitian(H)
         assert is_hermitian(get_quad_operator(H))
 
