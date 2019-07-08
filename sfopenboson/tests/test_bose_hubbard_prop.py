@@ -20,6 +20,7 @@ from scipy.linalg import expm
 
 from openfermion.ops import BosonOperator, QuadOperator
 from openfermion.hamiltonians import bose_hubbard
+from openfermion.transforms import get_quad_operator
 
 import strawberryfields as sf
 from strawberryfields.ops import Fock, Sgate
@@ -64,6 +65,27 @@ class TestBoseHubbardPropagation:
         """Test a 1x2 lattice Bose-Hubbard model"""
         prog = sf.Program(2)
         H = bose_hubbard(1, 2, self.J, self.U)
+
+        with prog.context as q:
+            Fock(2) | q[0]
+            BoseHubbardPropagation(H, self.t, self.k) | q
+
+        state = eng.run(prog).state
+
+        Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
+            + self.U*np.diag([1, 0, 1])
+        init_state = np.array([1, 0, 0])
+        exp = np.abs(np.dot(expm(-1j*self.t*Hm), init_state))**2
+
+        assert np.allclose(state.fock_prob([2, 0]), exp[0], rtol=tol)
+        assert np.allclose(state.fock_prob([1, 1]), exp[1], rtol=tol)
+        assert np.allclose(state.fock_prob([0, 2]), exp[2], rtol=tol)
+
+    def test_1x2_quadrature_operators(self, eng, tol):
+        """Test a 1x2 lattice Bose-Hubbard model by passing quadrature
+        operators instead of ladder operators"""
+        prog = sf.Program(2)
+        H = get_quad_operator(bose_hubbard(1, 2, self.J, self.U), hbar=2)
 
         with prog.context as q:
             Fock(2) | q[0]
