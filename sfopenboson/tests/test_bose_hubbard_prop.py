@@ -178,7 +178,7 @@ class TestBoseHubbardGlobalLocal:
             Fock(2) | q[0]
             BoseHubbardPropagation(self.H, self.t, self.k) | (q[0], q[2])
 
-        state = eng.run(prog, modes=[0, 2]).state
+        state = eng.run(prog, run_options={"modes": [0, 2]}).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
@@ -199,7 +199,7 @@ class TestBoseHubbardGlobalLocal:
             Fock(2) | q[0]
             BoseHubbardPropagation(self.H, self.t, self.k, mode='global') | q
 
-        state = eng.run(prog, modes=[0, 1]).state
+        state = eng.run(prog, run_options={"modes": [0, 1]}).state
 
         Hm = -self.J*np.sqrt(2)*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]) \
             + self.U*np.diag([1, 0, 1])
