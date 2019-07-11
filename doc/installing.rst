@@ -9,7 +9,7 @@ Dependencies
 
 SFOpenBoson depends on the following Python packages:
 
-* `Strawberry Fields <http://strawberryfields.readthedocs.io/>`_ >=0.7.3
+* `Strawberry Fields <http://strawberryfields.readthedocs.io/>`_ >=0.11
 * `OpenFermion <https://github.com/quantumlib/OpenFermion>`_ >=0.7
 
 These can be installed using pip, or, if on linux, using your package manager (i.e., ``apt`` if on a Debian-based system.)

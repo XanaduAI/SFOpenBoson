@@ -1,10 +1,6 @@
-PYTHON3 := $(shell which python3 2>/dev/null)
-COVERAGE3 := $(shell which coverage3 2>/dev/null)
-
-PYTHON := python3
-COVERAGE := coverage3
-COPTS := run #--append
-TESTRUNNER := -m unittest discover sfopenboson/tests
+PYTHON := $(shell which python3 2>/dev/null)
+TESTRUNNER := -m pytest sfopenboson/tests -p no:warnings
+COVERAGE := --cov=sfopenboson --cov-report=term --cov-report=html:coverage_html_report
 
 .PHONY: help
 help:
@@ -14,10 +10,8 @@ help:
 	@echo "  dist               to package the source distribution"
 	@echo "  clean              to delete all temporary, cache, and build files"
 	@echo "  clean-docs         to delete all built documentation"
-	@echo "  test               to run the test suite for all backends"
-	@echo "  test-[backend]     to run the test suite for backend fock, tf, or gaussian"
-	@echo "  coverage           to generate a coverage report for all backends"
-	@echo "  coverage-[backend] to generate a coverage report for backend fock, tf, or gaussian"
+	@echo "  test               to run the test suite"
+	@echo "  coverage           to generate a coverage report"
 
 .PHONY: install
 install:
@@ -53,6 +47,4 @@ test:
 
 coverage:
 	@echo "Generating coverage report..."
-	$(COVERAGE) $(COPTS) $(TESTRUNNER)
-	$(COVERAGE) report
-	$(COVERAGE) html
+	$(PYTHON) $(TESTRUNNER) $(COVERAGE)

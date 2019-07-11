@@ -104,7 +104,7 @@ def quadratic_coefficients(operator):
 class BoseHubbardError(ValueError):
     """Custom error function for invalid Bose-Hubbard Hamiltonians."""
 
-    def with_traceback(self, tb):
+    def with_traceback(self, tb): #pragma: no cover
         # pylint: disable=useless-super-delegation
         """This method sets argument ``tb`` as the new traceback for the exception
         and returns the exception object. See the

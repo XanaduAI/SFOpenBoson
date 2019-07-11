@@ -12,24 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test defaults"""
-import logging
-import os
-
-import unittest
-
-# Set the logging based on an environment variable.
-# default logging is set to WARNING.
-logLevel = os.environ.get("LOGGING", "WARNING")
-numeric_level = getattr(logging, logLevel.upper(), 10)
+import pytest
+import strawberryfields as sf
 
 
-logging.basicConfig(level=numeric_level, format='\n%(asctime)s %(levelname)s %(message)s', datefmt='%H:%M:%S')
-logging.captureWarnings(True)
+# defaults
+TOL = 1e-2
+HBAR = 2
 
 
-class BaseTest(unittest.TestCase):
-    """The base unit test class used by SFOpenBoson"""
+@pytest.fixture
+def tol():
+    """Numerical tolerance for equality tests."""
+    return TOL
 
-    def logTestName(self):
-        """Log the test method name at the information level"""
-        logging.info('%s', self.id())
+
+@pytest.fixture
+def hbar():
+    """Default value of hbar"""
+    sf.hbar = HBAR
+    return HBAR

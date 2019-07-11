@@ -68,15 +68,16 @@ Alternatively, you can set ``mode='global'``, and the Hamiltonian is instead app
 
 Let's set up the one qumode quantum circuit, propagating the forced oscillator Hamiltonian ``H`` we defined in the previous section, starting from the initial location :math:`(1,0.5)` in phase space, for time :math:`t=1.43`:
 
->>> eng, q = sf.Engine(1)
->>> with eng:
+>>> prog = sf.Program(1)
+>>> with prog.context as q:
 ...     Xgate(1) | q[0]
 ...     Zgate(0.5) | q[0]
 ...     GaussianPropagation(H, 1.43) | q
 
 Now, we can run this simulation using the `Gaussian backend of Strawberry Fields <https://strawberryfields.readthedocs.io/en/latest/code/backend.gaussian.html>`_, and output the location of the oscillator in phase space at time :math:`t=1.43`:
 
->>> state = eng.run('gaussian')
+>>> eng = sf.Engine("gaussian")
+>>> state = eng.run(prog).state
 >>> state.means()
 array([ 2.35472067,  1.06027036])
 
@@ -107,19 +108,21 @@ Consider the following example:
 
 .. code-block:: python
 
-	eng, q = sf.Engine(1, hbar=2)
+	eng = sf.Engine("gaussian")
 
 	t_vals = np.arange(0, 6, 0.02)
 	results = np.zeros([2, len(t_vals)])
 
 	for step, t in enumerate(t_vals):
-	    eng.reset()
-	    with eng:
+		prog = sf.Program(1)
+
+	    with prog.context as q:
 	        Xgate(1) | q[0]
 	        Zgate(0.5) | q[0]
 	        GaussianPropagation(H, t) | q
 
-	    state = eng.run('gaussian')
+	    state = eng.run(prog).state
+	    eng.reset()
 	    results[:, step] = state.means()
 
 Here, we are looping over the same circuit as above for values of :math:`t` within the domain :math:`0\leq t<6`, and storing the resulting expectation values :math:`(\braket{\q(t)}, \braket{\p(t)})` in the array ``results``. We can plot this array in phase space:

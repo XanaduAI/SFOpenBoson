@@ -292,31 +292,27 @@ html_theme_path = ['.']
 
 # xanadu theme options (see theme.conf for more information)
 html_theme_options = {
-
     # Set the path to a special layout to include for the homepage
-    # "index_template": "special_index.html",
+    # "homepage": "special_index.html",
 
     # Set the name of the project to appear in the left sidebar.
     "project_nav_name": "SFOpenBoson",
+    "touch_icon": "_static/logo_new.png",
+    "touch_icon_small": "_static/logo_new_small.png",
+    "large_toc": False,
 
-    # Set your Disqus short name to enable comments
-    # "disqus_comments_shortname": "my_disqus_comments_short_name",
+    # colors
+    "navigation_button": "#2ccca9",
+    "navigation_button_hover": "#1bab8b",
+    "toc_caption": "#2ccca9",
+    "toc_hover": "#2ccca9",
+    "table_header_bg": "#e8f9f6",
+    "table_header_border": "#2ccca9",
+    "download_button": "#2ccca9",
 
-    # Set you GA account ID to enable tracking
-    # "google_analytics_account": "UA-112607589-1",
-
-    # Path to a touch icon
-    "touch_icon": "logo_new.png",
-
-    # Specify a base_url used to generate sitemap.xml links. If not
-    # specified, then no sitemap will be built.
-    # "base_url": ""
-
-    # Allow a separate homepage from the master_doc
-    # "homepage": "index",
-
-    # Allow the project link to be overriden to a custom URL.
-    # "projectlink": "http://myproject.url",
+    # gallery options
+    "github_repo": "XanaduAI/SFOpenBoson",
+    # "gallery_dirs": sphinx_gallery_conf['gallery_dirs']
 }
 
 edit_on_github_project = 'XanaduAI/SFOpenBoson'
