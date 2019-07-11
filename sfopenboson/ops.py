@@ -94,7 +94,7 @@ from strawberryfields.ops import (BSgate,
 from strawberryfields.program_utils import Command
 from strawberryfields.backends.shared_ops import sympmat
 
-from strawberryfields.devicespecs import GaussianSpecs, FockSpecs, TFSpecs
+from strawberryfields.circuitspecs import GaussianSpecs, FockSpecs, TFSpecs
 
 from .auxillary import trotter_layer, quadratic_coefficients
 
