@@ -93,9 +93,9 @@ from strawberryfields.ops import (BSgate,
                                   Xgate,
                                   Zgate)
 from strawberryfields.program_utils import Command
-from thewalrus.symplectic import sympmat
-
 from strawberryfields.compilers import Gaussian, Fock
+
+from thewalrus.symplectic import sympmat
 
 from .auxillary import trotter_layer, quadratic_coefficients
 
