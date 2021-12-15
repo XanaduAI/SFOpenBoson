@@ -79,7 +79,8 @@ from scipy.linalg import expm, inv
 
 from openfermion.ops import QuadOperator, BosonOperator
 from openfermion.transforms import get_quad_operator, get_boson_operator
-from openfermion.utils import is_hermitian, prune_unused_indices
+from openfermion.utils import is_hermitian
+from openfermion.transforms import prune_unused_indices
 
 import strawberryfields as sf
 import strawberryfields.program_utils as pu
@@ -92,9 +93,9 @@ from strawberryfields.ops import (BSgate,
                                   Xgate,
                                   Zgate)
 from strawberryfields.program_utils import Command
-from strawberryfields.backends.shared_ops import sympmat
+from thewalrus.symplectic import sympmat
 
-from strawberryfields.circuitspecs import GaussianSpecs, FockSpecs, TFSpecs
+from strawberryfields.compilers import Gaussian, Fock
 
 from .auxillary import trotter_layer, quadratic_coefficients
 
@@ -319,6 +320,5 @@ class BoseHubbardPropagation(Decomposition):
         return cmds
 
 
-GaussianSpecs.decompositions.update({"GaussianPropagation": {}})
-FockSpecs.decompositions.update({"BoseHubbardPropagation": {}, "GaussianPropagation": {}})
-TFSpecs.decompositions.update({"BoseHubbardPropagation": {}, "GaussianPropagation": {}})
+Gaussian.decompositions.update({"GaussianPropagation": {}})
+Fock.decompositions.update({"BoseHubbardPropagation": {}, "GaussianPropagation": {}})
